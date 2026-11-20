@@ -1,4 +1,4 @@
-﻿/*
+/*
     Copyright (c) 2017 Marcin Szeniak (https://github.com/Klocman/)
     Apache License Version 2.0
 */
@@ -123,9 +123,16 @@ namespace Klocman.Tools
         private static readonly char[] SeparateArgsFromCommandInvalidChars =
             Path.GetInvalidFileNameChars().Concat(new[] { ',', ';' }).ToArray();
 
-        //static readonly char[] pathFilterChars = StringTools.InvalidPathChars.Except(new char[] { '"' }).ToArray();
+        //static readonly char[] pathFilterChars = StringTools.InvalidPathChars.Except(new char[] { '\"' }).ToArray();
         /// <summary>
         ///     Attempts to separate filename (or filename with path) from the supplied arguments.
+        ///
+        ///     Handles the following common formats:
+        ///     1. Quoted executable:    "C:\Program Files\App\unins000.exe" /SILENT
+        ///     2. Unquoted with ext:    C:\Program Files\App\unins000.exe /SILENT
+        ///     3. Bare executable:      msiexec /x {GUID} /quiet
+        ///     4. Launcher+path:        java -jar C:\App\uninst.jar   (splits at first space only)
+        ///     5. Non-dotted with dash: C:\Tools\uninstaller -silent
         /// </summary>
         /// <param name="fullCommand"></param>
         /// <returns></returns>
@@ -143,50 +150,70 @@ namespace Klocman.Tools
             if (string.IsNullOrEmpty(fullCommand))
                 throw new ArgumentException(Localisation.Error_SeparateArgsFromCommand_Empty, nameof(fullCommand));
 
+            // -----------------------------------------------------------------------
+            // Case 1: Command starts with a quote — the executable is quoted.
+            // Only treat the leading quote as a path boundary if the FIRST character
+            // is a quote (or leading whitespace then a quote). This avoids absorbing
+            // argument quotes like /l*v "C:\log.txt" into the executable name.
+            // -----------------------------------------------------------------------
+            if (fullCommand[0] == '"')
+            {
+                var closingQuote = fullCommand.IndexOf('"', 1);
+                if (closingQuote < 0)
+                    throw new FormatException(Localisation.Error_SeparateArgsFromCommand_MissingQuotationMark);
+
+                var filename = fullCommand.Substring(1, closingQuote - 1);
+                var args = fullCommand.Substring(closingQuote + 1).TrimStart();
+                return new ProcessStartCommand(filename, args);
+            }
+
+            // -----------------------------------------------------------------------
+            // Case 2: Unquoted — examine structure to find the executable boundary.
+            // -----------------------------------------------------------------------
+
             var firstDot = fullCommand.IndexOf('.');
-            if (firstDot < 0)
+            var firstSpaceForDotCheck = fullCommand.IndexOf(' ');
+            // If the first token (before the first space) contains no dot, the executable
+            // has no extension — use the non-dotted path.  We only redirect here when
+            // there is no drive root after the first space (which is handled by Case 3 below).
+            if (firstDot < 0 ||
+                (firstSpaceForDotCheck >= 0 && firstDot > firstSpaceForDotCheck &&
+                 fullCommand.IndexOf(":\\", firstSpaceForDotCheck, StringComparison.InvariantCulture) < 0))
                 return SeparateNonDottedCommand(fullCommand);
 
-            // Check if the path is in format: ExecutableName C:\Argname.exe
+            // -----------------------------------------------------------------------
+            // Case 3: "LauncherName C:\path\..." pattern (e.g. java -jar C:\App\x.jar)
+            // A drive root (X:\) exists somewhere after the first space.
+            // Split at the FIRST space only — not the last space before the drive root —
+            // so that "java -jar C:\..." does not accidentally produce FileName="java -jar".
+            // -----------------------------------------------------------------------
             {
                 var pathRoot = fullCommand.IndexOf(":\\", StringComparison.InvariantCulture);
                 var firstSpace = fullCommand.IndexOf(' ');
-                if (firstSpace >= 0 && firstSpace < pathRoot)
+
+                if (firstSpace >= 0 && pathRoot > firstSpace)
                 {
-                    var filenameBreaker = fullCommand.IndexOfAny(SeparateArgsFromCommandInvalidChars, 0, pathRoot - 1);
+                    // Confirm there are no invalid filename chars before the first space
+                    // (which would mean the leading token is not a plain executable name).
+                    var filenameBreaker = fullCommand.IndexOfAny(SeparateArgsFromCommandInvalidChars, 0, firstSpace);
                     if (filenameBreaker < 0)
                     {
-                        var slashIndex = fullCommand.IndexOf('\\');
-                        if (slashIndex >= 0 && slashIndex > pathRoot)
-                        {
-                            var rootSpace = fullCommand.LastIndexOf(' ', pathRoot);
-                            return new ProcessStartCommand(fullCommand.Substring(0, rootSpace).TrimEnd(),
-                                fullCommand.Substring(rootSpace));
-                        }
+                        // The token before the first space is a bare executable name; everything
+                        // after is arguments (which may start with flags and then the full path).
+                        return new ProcessStartCommand(
+                            fullCommand.Substring(0, firstSpace).TrimEnd(),
+                            fullCommand.Substring(firstSpace).TrimStart());
                     }
                 }
             }
 
-            // Check if the path is contained inside of quotation marks.
-            // Assume that the quotation mark must come before the dot. Otherwise, it is likely that the arguments use quotations.
-            var pathEnd = fullCommand.IndexOf('"', 0, firstDot);
-            if (pathEnd >= 0)
+            // -----------------------------------------------------------------------
+            // Case 4: Unquoted path with extension (e.g. C:\Program Files\App\unins.exe /S)
+            // Walk dots left-to-right and find where the filename ends (first space or
+            // invalid char that is not inside a path continuation).
+            // -----------------------------------------------------------------------
             {
-                // If yes, find the closing quotation mark and set its index as path end
-                pathEnd = fullCommand.IndexOf('"', pathEnd + 1);
-
-                if (pathEnd < 0)
-                {
-                    // If no ending quote has been found, explode gracefully.
-                    throw new FormatException(Localisation.Error_SeparateArgsFromCommand_MissingQuotationMark);
-                }
-                pathEnd += 1; //?
-            }
-
-            // If quotation marks were missing, check for any invalid characters after last dot
-            // in case of eg: c:\test.dir thing\filename.exe?0 used to get icons
-            if (pathEnd < 0)
-            {
+                var pathEnd = -1;
                 var endIndex = 0;
                 while (true)
                 {
@@ -225,11 +252,20 @@ namespace Klocman.Tools
                     endIndex = dash;
                 }
 
-                // old
-                //pathEnd = fullCommand.IndexOfAny(" ,:;?-=", fullCommand.LastIndexOf('.'));
-            }
+                // If the dot loop found no boundary, the exe has no extension but the
+                // directory path contains dots (e.g. App.1.0\uninstaller).  Fall back to
+                // the dash-argument check before treating the whole string as a filename.
+                if (pathEnd < 0)
+                {
+                    var spaceBeforeDash = FindSpacePrefixedDashArgument(fullCommand, 0);
+                    if (spaceBeforeDash >= 0)
+                        return new ProcessStartCommand(
+                            fullCommand.Substring(0, spaceBeforeDash).TrimEnd(),
+                            fullCommand.Substring(spaceBeforeDash).TrimStart());
+                }
 
-            return SeparateCommand(fullCommand, pathEnd);
+                return SeparateCommand(fullCommand, pathEnd);
+            }
         }
 
         private static ProcessStartCommand SeparateCommand(string fullCommand, int splitIndex)
@@ -260,23 +296,62 @@ namespace Klocman.Tools
             var pathRoot = fullCommand.IndexOf(":\\", StringComparison.InvariantCulture);
             var pathRootEnd = pathRoot < 0 ? 0 : pathRoot + 2;
 
+            // Exclude backslash from break chars so path segments are traversed correctly.
+            // Also exclude '-' so that flag characters like "-silent" or "--quiet" are
+            // recognised as argument breaks (a dash preceded by a space marks the start
+            // of arguments even for executables without a file extension).
             var breakChars = SeparateArgsFromCommandInvalidChars.Except(new[] { '\\' }).ToArray();
 
-            // Check if there are any invalid path chars before the start we found. If yes, our path is most likely an argument.
+            // Check if there are any invalid path chars before the start we found.
             if (pathRootEnd > 0 && fullCommand.IndexOfAny(breakChars, 0, pathRootEnd - 2) >= 0)
                 pathRootEnd = 0;
+
             var breakIndex = fullCommand.IndexOfAny(breakChars, pathRootEnd);
 
-            // If there are no invalid path chars, it's probably just a naked filename or directory path.
+            // No invalid path chars — it's probably just a naked filename or directory path.
             if (breakIndex < 0)
-                return new ProcessStartCommand(fullCommand.Trim('"'));
+            {
+                // Still check for a dash-prefixed argument after a space: "uninstaller -silent"
+                var spaceBeforeDash = FindSpacePrefixedDashArgument(fullCommand, pathRootEnd);
+                if (spaceBeforeDash >= 0)
+                    return new ProcessStartCommand(
+                        fullCommand.Substring(0, spaceBeforeDash).TrimEnd(),
+                        fullCommand.Substring(spaceBeforeDash).TrimStart());
 
-            // The invalid char has to have at least 1 space before it to count as an argument. Otherwise the input is likely garbage.
+                return new ProcessStartCommand(fullCommand.Trim('"'));
+            }
+
+            // The invalid char has to have at least 1 space before it to count as an argument.
             if (breakIndex > 0 && fullCommand[breakIndex - 1] == ' ')
                 return new ProcessStartCommand(fullCommand.Substring(0, breakIndex - 1).TrimEnd(),
                     fullCommand.Substring(breakIndex));
 
             throw new FormatException(Localisation.Error_SeparateArgsFromCommand_NoDot + "\n" + fullCommand);
+        }
+
+        /// <summary>
+        /// Finds the index of the first space-preceded '-' or '--' sequence that starts an argument,
+        /// e.g. the space before "-silent" in "C:\Tools\uninstaller -silent".
+        /// Returns -1 if none found.
+        /// </summary>
+        private static int FindSpacePrefixedDashArgument(string command, int searchFrom)
+        {
+            var i = searchFrom;
+            while (i < command.Length)
+            {
+                var spaceIdx = command.IndexOf(' ', i);
+                if (spaceIdx < 0) break;
+
+                var nextNonSpace = spaceIdx + 1;
+                while (nextNonSpace < command.Length && command[nextNonSpace] == ' ')
+                    nextNonSpace++;
+
+                if (nextNonSpace < command.Length && command[nextNonSpace] == '-')
+                    return spaceIdx;
+
+                i = nextNonSpace;
+            }
+            return -1;
         }
 
         /// <summary>

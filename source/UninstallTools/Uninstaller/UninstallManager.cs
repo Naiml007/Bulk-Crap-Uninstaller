@@ -183,7 +183,7 @@ namespace UninstallTools.Uninstaller
 
             var newName = PathTools.SanitizeFileName(entryName);
             if (newName.Length > 8) newName = newName.Substring(0, 8);
-            newName += "_" + Path.GetFileName(startInfo.FileName);
+            newName += "_" + Guid.NewGuid().ToString("N").Substring(0, 8) + "_" + Path.GetFileName(startInfo.FileName);
 
             var originalDirectory = Path.GetDirectoryName(startInfo.FileName)?.TrimEnd('\\');
             Debug.Assert(originalDirectory != null);

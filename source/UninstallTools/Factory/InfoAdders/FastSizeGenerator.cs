@@ -10,27 +10,28 @@ using System.Text;
 using System.Threading.Tasks;
 using Klocman.Extensions;
 using Klocman.IO;
-using Scripting;
 using File = System.IO.File;
 
 namespace UninstallTools.Factory.InfoAdders
 {
     public class FastSizeGenerator : IMissingInfoAdder
     {
-        private static readonly FileSystemObjectClass _fileSystemObject;
         private static bool _everythingAvailable;
+
+        /// <summary>
+        /// EnumerationOptions reused for all managed directory size calculations.
+        /// IgnoreInaccessible prevents UnauthorizedAccessException on restricted folders.
+        /// AttributesToSkip with ReparsePoint prevents hanging on circular NTFS directory junctions.
+        /// </summary>
+        private static readonly EnumerationOptions ManagedEnumOptions = new EnumerationOptions
+        {
+            RecurseSubdirectories = true,
+            IgnoreInaccessible = true,
+            AttributesToSkip = FileAttributes.ReparsePoint
+        };
 
         static FastSizeGenerator()
         {
-            try
-            {
-                _fileSystemObject = new FileSystemObjectClass();
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine(@"FastSizeGenerator: Scripting.FileSystemObjectClass is not available - " + ex.Message);
-            }
-
             try
             {
                 if (EvGetSize(UninstallToolsGlobalConfig.AssemblyLocation).GetKbSize() == 0)
@@ -64,18 +65,20 @@ namespace UninstallTools.Factory.InfoAdders
                 }
             }
 
-            if (_fileSystemObject != null)
+            // Managed fallback: replaces the former Scripting.FileSystemObject COM dependency.
+            // DirectoryInfo.EnumerateFiles uses NtQueryDirectoryFile / FindFirstFileExW with
+            // FIND_FIRST_EX_LARGE_FETCH, which is as fast as (or faster than) scrrun.dll FSO
+            // and correctly handles long paths (>260 chars) that FSO cannot.
+            try
             {
-                try
-                {
-                    var folder = _fileSystemObject.GetFolder(target.InstallLocation);
-                    var size = new FileSize(Convert.ToInt64(folder.Size) / 1024);
-                    target.EstimatedSize = size;
-                }
-                catch (Exception ex)
-                {
-                    Trace.WriteLine(ex);
-                }
+                long totalBytes = 0;
+                foreach (var file in new DirectoryInfo(target.InstallLocation).EnumerateFiles("*", ManagedEnumOptions))
+                    totalBytes += file.Length;
+                target.EstimatedSize = FileSize.FromBytes(totalBytes);
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
             }
         }
 

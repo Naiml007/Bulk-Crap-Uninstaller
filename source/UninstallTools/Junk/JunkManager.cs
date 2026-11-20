@@ -34,13 +34,15 @@ namespace UninstallTools.Junk
             if (x is FileSystemJunk fileSystemJunk)
             {
                 return fileSystemJunk.Path == null || 
-                       !fileSystemJunk.Path.FullName.StartsWith(UninstallToolsGlobalConfig.AppLocation, StringComparison.OrdinalIgnoreCase);
+                       !fileSystemJunk.Path.FullName.StartsWith(UninstallToolsGlobalConfig.AppLocation + System.IO.Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) &&
+                       !fileSystemJunk.Path.FullName.Equals(UninstallToolsGlobalConfig.AppLocation, StringComparison.OrdinalIgnoreCase);
             }
 
             if (x is StartupJunkNode startupJunk)
             {
                 return startupJunk.Entry?.CommandFilePath == null || 
-                       !startupJunk.Entry.CommandFilePath.StartsWith(UninstallToolsGlobalConfig.AppLocation, StringComparison.OrdinalIgnoreCase);
+                       (!startupJunk.Entry.CommandFilePath.StartsWith(UninstallToolsGlobalConfig.AppLocation + System.IO.Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) &&
+                        !startupJunk.Entry.CommandFilePath.Equals(UninstallToolsGlobalConfig.AppLocation, StringComparison.OrdinalIgnoreCase));
             }
 
             return true;
@@ -75,7 +77,16 @@ namespace UninstallTools.Junk
             if (arg is not FileSystemJunk fileSystemJunk)
                 return true;
 
-            return !prohibitedDirs.Contains(fileSystemJunk.Path.FullName.ToLowerInvariant());
+            var path = fileSystemJunk.Path.FullName;
+            foreach (var prohibited in prohibitedDirs)
+            {
+                if (path.Equals(prohibited, StringComparison.OrdinalIgnoreCase))
+                    return false;
+                if (path.StartsWith(prohibited + System.IO.Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) ||
+                    path.StartsWith(prohibited + System.IO.Path.AltDirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+                    return false;
+            }
+            return true;
         }
 
         /// <summary>

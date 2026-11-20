@@ -14,21 +14,28 @@ namespace BulkCrapUninstaller.Functions.Tools
     {
         public static string GetStartupUninstallListPath(IEnumerable<string> commandLineArgs)
         {
-            var candidate = commandLineArgs?.Skip(1).FirstOrDefault();
-            if (string.IsNullOrWhiteSpace(candidate))
-                return null;
+            if (commandLineArgs == null) return null;
 
-            try
+            foreach (var candidate in commandLineArgs.Skip(1))
             {
-                if (!candidate.EndsWith(".bcul", StringComparison.OrdinalIgnoreCase))
-                    return null;
+                if (string.IsNullOrWhiteSpace(candidate))
+                    continue;
 
-                return File.Exists(candidate) ? candidate : null;
+                try
+                {
+                    if (!candidate.EndsWith(".bcul", StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    if (File.Exists(candidate))
+                        return candidate;
+                }
+                catch (Exception ex) when (ex is ArgumentException or NotSupportedException or PathTooLongException)
+                {
+                    // Ignore invalid candidate and continue
+                }
             }
-            catch (Exception ex) when (ex is ArgumentException or NotSupportedException or PathTooLongException)
-            {
-                return null;
-            }
+
+            return null;
         }
     }
 }

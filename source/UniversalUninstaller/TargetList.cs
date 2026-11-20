@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,26 +9,23 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Klocman.IO;
 using Klocman.Tools;
-using Scripting;
 using UniversalUninstaller.Properties;
 
 namespace UniversalUninstaller
 {
     public partial class TargetList : UserControl
     {
-        static readonly FileSystemObjectClass FileSystemObject;
-
-        static TargetList()
+        /// <summary>
+        /// EnumerationOptions for managed directory size calculation.
+        /// IgnoreInaccessible prevents UnauthorizedAccessException on restricted folders.
+        /// AttributesToSkip with ReparsePoint prevents hanging on circular NTFS directory junctions.
+        /// </summary>
+        private static readonly EnumerationOptions ManagedEnumOptions = new EnumerationOptions
         {
-            try
-            {
-                FileSystemObject = new FileSystemObjectClass();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(@"WARNING: Scripting.FileSystemObjectClass is not available - " + ex.Message);
-            }
-        }
+            RecurseSubdirectories = true,
+            IgnoreInaccessible = true,
+            AttributesToSkip = FileAttributes.ReparsePoint
+        };
 
         public TargetList()
         {
@@ -67,14 +64,18 @@ namespace UniversalUninstaller
             if (treeEntry.IsDirectory == false)
                 return FileSize.FromBytes(((FileInfo)treeEntry.FileSystemInfo).Length);
 
-            if (FileSystemObject == null || treeEntry.FileSystemInfo is not DirectoryInfo dirInfo || !dirInfo.Exists)
+            if (treeEntry.FileSystemInfo is not DirectoryInfo dirInfo || !dirInfo.Exists)
                 return FileSize.Empty;
 
+            // Managed replacement for the former Scripting.FileSystemObject COM dependency.
+            // DirectoryInfo.EnumerateFiles with EnumerationOptions handles restricted folders
+            // gracefully (IgnoreInaccessible) and avoids hanging on symlink loops (ReparsePoint skip).
             try
             {
-                var folder = FileSystemObject.GetFolder(dirInfo.FullName);
-                var size = new FileSize(Convert.ToInt64(folder.Size) / 1024);
-                return size;
+                long totalBytes = 0;
+                foreach (var file in dirInfo.EnumerateFiles("*", ManagedEnumOptions))
+                    totalBytes += file.Length;
+                return FileSize.FromBytes(totalBytes);
             }
             catch (Exception ex)
             {

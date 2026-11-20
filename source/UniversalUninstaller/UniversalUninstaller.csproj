@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 
@@ -13,17 +13,7 @@
 		<ProjectReference Include="..\ObjectListView\ObjectListView.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<COMReference Include="Scripting">
-			<Guid>{420B2830-E718-11CF-893D-00A0C9054228}</Guid>
-			<VersionMajor>1</VersionMajor>
-			<VersionMinor>0</VersionMinor>
-			<Lcid>0</Lcid>
-			<WrapperTool>tlbimp</WrapperTool>
-			<Isolated>False</Isolated>
-			<EmbedInteropTypes>false</EmbedInteropTypes>
-		</COMReference>
-	</ItemGroup>
+
 
 	<ItemGroup>
 	  <Compile Update="Properties\Localisation.Designer.cs">

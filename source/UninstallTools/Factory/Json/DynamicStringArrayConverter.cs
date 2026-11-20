@@ -83,7 +83,16 @@ namespace UninstallTools.Factory.Json
 
         public override void Write(Utf8JsonWriter writer, string[] value, JsonSerializerOptions options)
         {
-            throw new NotImplementedException();
+            if (value == null)
+            {
+                writer.WriteNullValue();
+                return;
+            }
+
+            writer.WriteStartArray();
+            foreach (var item in value)
+                writer.WriteStringValue(item);
+            writer.WriteEndArray();
         }
     }
 }

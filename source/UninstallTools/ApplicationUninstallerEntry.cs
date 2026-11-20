@@ -527,7 +527,11 @@ namespace UninstallTools
             {
                 path = ProcessTools.SeparateArgsFromCommand(path).FileName;
                 if (!isFilename && path.Contains('.') && !Directory.Exists(path))
-                    return Path.GetDirectoryName(path);
+                {
+                    var name = System.IO.Path.GetFileName(path);
+                    if (name.Contains('.'))
+                        return System.IO.Path.GetDirectoryName(path);
+                }
             }
             catch
             {
