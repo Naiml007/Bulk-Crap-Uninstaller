@@ -58,10 +58,56 @@ namespace BulkCrapUninstaller.Functions.Tools
         public static void ApplyToControl(Control control)
         {
             if (control == null) return;
-            control.BackColor = Background;
-            control.ForeColor = Text;
+
+            // Don't restyle third-party list controls
+            if (control.GetType().FullName != null &&
+                control.GetType().FullName.StartsWith("BrightIdeasSoftware", StringComparison.Ordinal))
+                return;
+
+            if (control is Button btn)
+            {
+                btn.FlatStyle = FlatStyle.Flat;
+                btn.BackColor = Accent;
+                btn.ForeColor = Color.White;
+                btn.FlatAppearance.BorderSize = 0;
+                btn.Cursor = Cursors.Hand;
+            }
+            else if (control is TextBox || control is ComboBox)
+            {
+                control.BackColor = Surface;
+                control.ForeColor = Text;
+                if (control is TextBox tb) tb.BorderStyle = BorderStyle.FixedSingle;
+            }
+            else if (control is CheckBox cb)
+            {
+                cb.FlatStyle = FlatStyle.Flat;
+                cb.ForeColor = Text;
+            }
+            else if (control is Label lbl)
+            {
+                lbl.ForeColor = Text;
+                lbl.BackColor = Color.Transparent;
+            }
+            else if (control is Panel || control is GroupBox || control is TabControl || control is SplitContainer)
+            {
+                control.BackColor = Background;
+                control.ForeColor = Text;
+            }
+            else if (control is Form frm)
+            {
+                frm.BackColor = Background;
+                frm.ForeColor = Text;
+            }
+
             foreach (Control c in control.Controls)
                 ApplyToControl(c);
+        }
+
+        public static void ApplyToForm(Form form)
+        {
+            if (form == null) return;
+            ApplyBackdrop(form);
+            ApplyToControl(form);
         }
     }
 }
