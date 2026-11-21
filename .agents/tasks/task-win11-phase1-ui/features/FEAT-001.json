@@ -1,0 +1,19 @@
+{
+  "id": "FEAT-001",
+  "type": "chore",
+  "description": "Baseline verification: ensure the project builds cleanly on the feature/win11-ui branch before any changes are made.",
+  "status": "completed",
+  "steps": [
+    "Confirm git branch is feature/win11-ui: run 'git branch --show-current'",
+    "Run the build: dotnet build source\\BulkCrapUninstaller\\BulkCrapUninstaller.csproj -p:Platform=\"Any CPU\" -c Release",
+    "If build fails, record the error in findings and mark blocked. If build succeeds, mark completed."
+  ],
+  "acceptance_criteria": [
+    "dotnet build exits with code 0 and prints 'Build succeeded'"
+  ],
+  "verification": [
+    "dotnet build source\\BulkCrapUninstaller\\BulkCrapUninstaller.csproj -p:Platform=\"Any CPU\" -c Release"
+  ],
+  "blocked_reason": null,
+  "findings": "Branch confirmed as feature/win11-ui. Build succeeded with 0 warnings and 0 errors (exit code 0). Output: bin/Release/Any CPU/BCUninstaller.dll. Build time: ~41s. Baseline is clean and ready for UI changes."
+}
