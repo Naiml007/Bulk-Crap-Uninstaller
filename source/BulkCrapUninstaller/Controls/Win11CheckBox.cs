@@ -1,4 +1,4 @@
-/*
+﻿/*
     Copyright (c) 2017 Marcin Szeniak (https://github.com/Klocman/)
     Apache License Version 2.0
 */
@@ -29,7 +29,7 @@ namespace BulkCrapUninstaller.Controls
             g.SmoothingMode = SmoothingMode.AntiAlias;
 
             // Clear background
-            g.Clear(Parent?.BackColor ?? SystemColors.Control);
+            using (var bgBrush = new SolidBrush(Parent?.BackColor ?? SystemColors.Control)) g.FillRectangle(bgBrush, ClientRectangle);
 
             const int boxSize = 16;
             int x = 0;

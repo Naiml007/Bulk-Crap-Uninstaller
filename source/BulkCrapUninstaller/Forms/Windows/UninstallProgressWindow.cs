@@ -70,8 +70,6 @@ namespace BulkCrapUninstaller.Forms
         private UninstallProgressWindow()
         {
             InitializeComponent();
-
-            BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
             _themeChangedHandler = (s, e) => BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
             BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged += _themeChangedHandler;
             FormClosed += (s, e) => BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged -= _themeChangedHandler;

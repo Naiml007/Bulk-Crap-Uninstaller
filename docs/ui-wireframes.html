@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BCUninstaller — Windows 11 UI Wireframes</title>
+<style>
+  :root {
+    --base: #F3F3F3;
+    --secondary: #EBEBEB;
+    --tertiary: #E0E0E0;
+    --accent: #0067C0;
+    --accent-hover: #1A6EC7;
+    --text-primary: #1A1A1A;
+    --text-secondary: #5D5D5D;
+    --text-disabled: #A5A5A5;
+    --stroke: rgba(0,0,0,0.08);
+    --card-bg: #FFFFFF;
+    --radius-ctrl: 4px;
+    --radius-overlay: 8px;
+    --shadow-card: 0 2px 4px rgba(0,0,0,0.07);
+    --shadow-flyout: 0 8px 16px rgba(0,0,0,0.14);
+    --font: 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #E8E8E8; font-family: var(--font); color: var(--text-primary); padding: 32px; }
+
+  h1 { font-size: 28px; font-weight: 300; margin-bottom: 8px; }
+  h2 { font-size: 20px; font-weight: 600; margin: 48px 0 16px; color: var(--text-primary); }
+  .label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+           color: var(--text-secondary); margin-bottom: 8px; }
+
+  /* ── WINDOW SHELL ─────────────────────────────────── */
+  .window {
+    background: var(--base);
+    border-radius: 12px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+    overflow: hidden;
+    max-width: 980px;
+    border: 1px solid var(--stroke);
+  }
+  .title-bar {
+    height: 32px;
+    background: var(--base);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 8px;
+    border-bottom: 1px solid var(--stroke);
+    position: relative;
+  }
+  .title-bar .app-icon { width: 16px; height: 16px; background: var(--accent); border-radius: 3px; }
+  .title-bar .app-title { font-size: 12px; color: var(--text-secondary); }
+  .title-bar .chrome-btns {
+    position: absolute; right: 0; top: 0; height: 32px;
+    display: flex;
+  }
+  .title-bar .chrome-btn {
+    width: 46px; height: 32px; display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: var(--text-secondary); cursor: pointer;
+  }
+  .title-bar .chrome-btn:hover { background: var(--secondary); }
+  .title-bar .chrome-btn.close:hover { background: #C42B1C; color: white; }
+
+  /* ── COMMAND BAR ──────────────────────────────────── */
+  .commandbar {
+    height: 48px;
+    background: var(--secondary);
+    border-bottom: 1px solid var(--stroke);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 8px;
+  }
+  .search-box {
+    height: 32px;
+    width: 280px;
+    border: 1px solid var(--stroke);
+    border-radius: 16px;
+    background: var(--card-bg);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .search-box .search-icon { font-size: 14px; }
+  .chip {
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 14px;
+    border: 1px solid var(--stroke);
+    background: var(--card-bg);
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: var(--text-primary);
+  }
+  .chip.active { background: var(--accent); color: white; border-color: var(--accent); }
+  .spacer { flex: 1; }
+  .btn {
+    height: 32px;
+    padding: 0 16px;
+    border-radius: var(--radius-ctrl);
+    border: 1px solid var(--stroke);
+    background: var(--card-bg);
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-primary);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .btn.accent { background: var(--accent); color: white; border-color: var(--accent); }
+  .btn-split {
+    display: flex; height: 32px; border-radius: var(--radius-ctrl); overflow: hidden;
+    border: 1px solid var(--accent);
+  }
+  .btn-split .main { background: var(--accent); color: white; padding: 0 16px; font-size: 13px;
+    display:flex; align-items:center; cursor:pointer; border-right: 1px solid rgba(255,255,255,0.3); }
+  .btn-split .arrow { background: var(--accent); color: white; padding: 0 8px; font-size: 11px;
+    display:flex; align-items:center; cursor:pointer; }
+
+  /* ── MAIN CONTENT AREA ───────────────────────────── */
+  .content-area {
+    display: flex;
+    min-height: 480px;
+  }
+
+  /* ── APP LIST ─────────────────────────────────────── */
+  .app-list { flex: 1; overflow: hidden; min-width: 0; }
+  .col-headers {
+    display: grid;
+    grid-template-columns: 32px minmax(0,1fr) 130px 72px 100px 72px;
+    height: 32px;
+    align-items: center;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--stroke);
+    background: var(--secondary);
+    font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .app-row {
+    display: grid;
+    grid-template-columns: 32px minmax(0,1fr) 130px 72px 100px 72px;
+    height: 52px;
+    align-items: center;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--stroke);
+    background: var(--card-bg);
+    font-size: 13px;
+  }
+  .app-row:nth-child(even) { background: var(--base); }
+  .app-row.selected { background: rgba(0,103,192,0.08); }
+  .app-row.hovered { background: var(--secondary); }
+  .app-row .app-name { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .app-name-text { min-width: 0; overflow: hidden; }
+  .app-name-text .name-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; }
+  .app-name-text .ver-line  { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
+  .app-icon-sm { width: 24px; height: 24px; border-radius: 4px; flex-shrink: 0; }
+  .stars { color: var(--accent); font-size: 11px; letter-spacing: 1px; }
+  .badge { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 10px;
+           font-weight: 600; }
+  .badge.sys { background: #EFF6FC; color: #0067C0; }
+  .badge.store { background: #F3F9F1; color: #107C10; }
+  .checkbox-cell { display:flex; align-items:center; justify-content:center; }
+  .cb { width:16px; height:16px; border-radius:3px; border:1px solid var(--stroke);
+        background:var(--card-bg); display:flex; align-items:center; justify-content:center; }
+  .cb.checked { background: var(--accent); border-color: var(--accent); color: white; font-size: 10px; }
+
+  /* ── SIDEBAR ──────────────────────────────────────── */
+  .sidebar {
+    width: 300px;
+    flex-shrink: 0;
+    border-left: 1px solid var(--stroke);
+    background: var(--card-bg);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .sidebar-header { display: flex; align-items: center; gap: 12px; }
+  .sidebar-icon {
+    width: 48px; height: 48px; border-radius: 8px; flex-shrink: 0;
+    box-shadow: var(--shadow-card);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 700; color: white; letter-spacing: -1px;
+  }
+  .sidebar-title { font-size: 15px; font-weight: 600; line-height: 1.3; }
+  .sidebar-subtitle { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .divider { height: 1px; background: var(--stroke); }
+  .prop-row { display: grid; grid-template-columns: 100px 1fr; gap: 4px; align-items: start; }
+  .prop-label { font-size: 12px; color: var(--text-secondary); }
+  .prop-value { font-size: 13px; }
+  .prop-link { font-size: 13px; color: var(--accent); cursor: pointer; }
+  .sidebar-actions { display: flex; gap: 8px; margin-top: 4px; }
+  .sidebar-actions .btn { flex:1; justify-content:center; }
+
+  /* ── STATUS BAR ───────────────────────────────────── */
+  .statusbar {
+    height: 32px;
+    background: var(--secondary);
+    border-top: 1px solid var(--stroke);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    gap: 12px;
+    white-space: nowrap;
+  }
+  .status-sep { width: 1px; height: 16px; background: var(--stroke); flex-shrink: 0; }
+
+  /* ── SETTINGS WINDOW ─────────────────────────────── */
+  .settings-layout { display: flex; min-height: 500px; }
+  .settings-nav {
+    width: 240px;
+    border-right: 1px solid var(--stroke);
+    background: var(--secondary);
+    padding: 8px;
+  }
+  .nav-item {
+    height: 40px; border-radius: var(--radius-ctrl); display: flex; align-items: center;
+    padding: 0 12px; gap: 12px; font-size: 14px; cursor: pointer; color: var(--text-primary);
+    position: relative;
+  }
+  .nav-item:hover { background: var(--tertiary); }
+  .nav-item.active { background: var(--card-bg); font-weight: 600; }
+  .nav-item.active::before {
+    content:''; position:absolute; left:0; top:8px; bottom:8px; width:3px;
+    background: var(--accent); border-radius: 0 2px 2px 0;
+  }
+  .nav-icon { font-size: 16px; }
+  .settings-content { flex: 1; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+  .settings-page-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+  .settings-card {
+    background: var(--card-bg); border-radius: var(--radius-ctrl);
+    box-shadow: var(--shadow-card); border: 1px solid var(--stroke);
+    padding: 16px 20px; display: flex; align-items: center; gap: 16px;
+    min-height: 72px;
+  }
+  .settings-card-icon { font-size: 24px; width: 32px; text-align: center; }
+  .settings-card-text { flex: 1; }
+  .settings-card-title { font-size: 14px; font-weight: 600; }
+  .settings-card-desc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .settings-card-ctrl { flex-shrink: 0; }
+  .toggle {
+    width: 44px; height: 24px; border-radius: 12px; background: var(--accent);
+    position: relative; cursor: pointer;
+  }
+  .toggle::after {
+    content:''; position:absolute; right:3px; top:3px; width:18px; height:18px;
+    border-radius: 50%; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .select-ctrl {
+    height: 32px; padding: 0 12px; border-radius: var(--radius-ctrl);
+    border: 1px solid var(--stroke); background: var(--card-bg); font-size: 13px;
+    min-width: 120px; color: var(--text-primary);
+  }
+
+  /* ── PROGRESS WINDOW ─────────────────────────────── */
+  .dialog-scrim {
+    background: rgba(0,0,0,0.25); border-radius: 12px; display: flex;
+    align-items: center; justify-content: center; padding: 40px;
+  }
+  .dialog {
+    background: var(--card-bg); border-radius: var(--radius-overlay);
+    box-shadow: var(--shadow-flyout); border: 1px solid var(--stroke);
+    width: 480px; padding: 24px; display: flex; flex-direction: column; gap: 16px;
+  }
+  .dialog-title { font-size: 20px; font-weight: 600; }
+  .progress-track {
+    height: 4px; background: var(--secondary); border-radius: 2px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; border-radius: 2px; background: var(--accent);
+    background: linear-gradient(90deg, var(--accent) 60%, rgba(0,103,192,0.4) 80%, var(--accent) 100%);
+    width: 60%;
+  }
+  .progress-label { font-size: 12px; color: var(--text-secondary); }
+  .expander-header {
+    display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .log-area {
+    background: var(--secondary); border-radius: var(--radius-ctrl);
+    border: 1px solid var(--stroke); padding: 10px; font-family: Consolas, monospace;
+    font-size: 11px; color: var(--text-secondary); height: 100px; overflow-y: auto;
+    line-height: 1.6;
+  }
+  .dialog-footer { display: flex; gap: 8px; justify-content: flex-end; }
+
+  /* ── JUNK WINDOW ────────────────────────────────── */
+  .expander-group { border: 1px solid var(--stroke); border-radius: var(--radius-ctrl); overflow: hidden; margin-bottom: 8px; }
+  .expander-hdr {
+    background: var(--secondary); height: 44px; display: flex; align-items: center;
+    padding: 0 16px; gap: 10px; cursor: pointer; font-weight: 600; font-size: 13px;
+  }
+  .count-badge {
+    padding: 1px 8px; border-radius: 10px; font-size: 11px; font-weight: 700;
+    background: var(--accent); color: white;
+  }
+  .expander-row {
+    height: 40px; display: grid; grid-template-columns: 32px 1fr 80px;
+    align-items: center; padding: 0 16px; border-top: 1px solid var(--stroke);
+    font-size: 12px; background: var(--card-bg);
+  }
+  .expander-row:nth-child(even) { background: var(--base); }
+
+  /* ── SECTION HEADERS ─────────────────────────────── */
+  .screen-wrap { margin-bottom: 56px; }
+</style>
+</head>
+<body>
+
+<h1>BCUninstaller — Windows 11 UI Redesign</h1>
+<p style="color:var(--text-secondary);font-size:14px;margin-top:4px;">Wireframes based on Fluent Design / Windows 11 UI Kit</p>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="screen-wrap">
+  <h2>1 · Main Window</h2>
+  <div class="label">CommandBar · App List · Properties Sidebar · Status Bar</div>
+  <div class="window">
+    <!-- Title bar -->
+    <div class="title-bar">
+      <div class="app-icon"></div>
+      <span class="app-title">BCUninstaller</span>
+      <div class="chrome-btns">
+        <div class="chrome-btn">─</div>
+        <div class="chrome-btn">□</div>
+        <div class="chrome-btn close">✕</div>
+      </div>
+    </div>
+    <!-- Command bar -->
+    <div class="commandbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <span>Search applications…</span>
+      </div>
+      <div class="chip active">All</div>
+      <div class="chip">System</div>
+      <div class="chip">Store</div>
+      <div class="chip">Hidden</div>
+      <div class="spacer"></div>
+      <div class="btn">Refresh</div>
+      <div class="btn">Tools ▾</div>
+      <div class="btn-split">
+        <div class="main">🗑 Uninstall Selected</div>
+        <div class="arrow">▾</div>
+      </div>
+    </div>
+    <!-- Content -->
+    <div class="content-area">
+      <!-- List -->
+      <div class="app-list">
+        <div class="col-headers">
+          <div></div>
+          <div>Application</div>
+          <div>Publisher</div>
+          <div>Size</div>
+          <div>Installed</div>
+          <div>Rating</div>
+        </div>
+        <!-- rows -->
+        <div class="app-row selected">
+          <div class="checkbox-cell"><div class="cb checked">✓</div></div>
+          <div class="app-name">
+            <div class="app-icon-sm" style="background:#C42B1C"></div>
+            <div class="app-name-text">
+              <div class="name-line">Adobe Acrobat Reader DC</div>
+              <div class="ver-line">24.001.20629</div>
+            </div>
+          </div>
+          <div>Adobe Inc.</div>
+          <div>852 MB</div>
+          <div>2024-03-12</div>
+          <div><span class="stars">★★★★☆</span></div>
+        </div>
+        <div class="app-row">
+          <div class="checkbox-cell"><div class="cb checked">✓</div></div>
+          <div class="app-name">
+            <div class="app-icon-sm" style="background:#0067C0"></div>
+            <div class="app-name-text">
+              <div class="name-line">Microsoft OneDrive</div>
+              <div class="ver-line">24.070.0407</div>
+            </div>
+          </div>
+          <div>Microsoft Corp.</div>
+          <div>284 MB</div>
+          <div>2024-04-07</div>
+          <div><span class="stars">★★★☆☆</span></div>
+        </div>
+        <div class="app-row hovered">
+          <div class="checkbox-cell"><div class="cb"></div></div>
+          <div class="app-name">
+            <div class="app-icon-sm" style="background:#107C10"></div>
+            <div class="app-name-text">
+              <div class="name-line">Spotify <span class="badge store">Store</span></div>
+              <div class="ver-line">1.2.31.1205</div>
+            </div>
+          </div>
+          <div>Spotify AB</div>
+          <div>120 MB</div>
+          <div>2024-01-20</div>
+          <div><span class="stars">★★★★★</span></div>
+        </div>
+        <div class="app-row">
+          <div class="checkbox-cell"><div class="cb"></div></div>
+          <div class="app-name">
+            <div class="app-icon-sm" style="background:#8764B8"></div>
+            <div class="app-name-text">
+              <div class="name-line">Windows Defender <span class="badge sys">System</span></div>
+              <div class="ver-line">4.18.24030</div>
+            </div>
+          </div>
+          <div>Microsoft Corp.</div>
+          <div>—</div>
+          <div>—</div>
+          <div><span class="stars" style="color:var(--text-disabled)">☆☆☆☆☆</span></div>
+        </div>
+        <div class="app-row">
+          <div class="checkbox-cell"><div class="cb"></div></div>
+          <div class="app-name">
+            <div class="app-icon-sm" style="background:#FF8C00"></div>
+            <div class="app-name-text">
+              <div class="name-line">VLC media player</div>
+              <div class="ver-line">3.0.20</div>
+            </div>
+          </div>
+          <div>VideoLAN</div>
+          <div>96 MB</div>
+          <div>2023-11-05</div>
+          <div><span class="stars">★★★★★</span></div>
+        </div>
+        <div class="app-row">
+          <div class="checkbox-cell"><div class="cb"></div></div>
+          <div class="app-name">
+            <div class="app-icon-sm" style="background:#005A9E"></div>
+            <div class="app-name-text">
+              <div class="name-line">7-Zip</div>
+              <div class="ver-line">23.01</div>
+            </div>
+          </div>
+          <div>Igor Pavlov</div>
+          <div>5 MB</div>
+          <div>2023-07-01</div>
+          <div><span class="stars">★★★★★</span></div>
+        </div>
+        <div style="padding:12px 16px;font-size:12px;color:var(--text-disabled)">… 71 more applications</div>
+      </div>
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-icon" style="background:#C42B1C">AA</div>
+          <div>
+            <div class="sidebar-title">Adobe Acrobat Reader DC</div>
+            <div class="sidebar-subtitle">Adobe Inc. · v24.001.20629</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <div class="prop-row"><div class="prop-label">Publisher</div><div class="prop-value">Adobe Inc.</div></div>
+          <div class="prop-row"><div class="prop-label">Version</div><div class="prop-value">24.001.20629</div></div>
+          <div class="prop-row"><div class="prop-label">Size</div><div class="prop-value">852 MB</div></div>
+          <div class="prop-row"><div class="prop-label">Installed</div><div class="prop-value">2024-03-12</div></div>
+          <div class="prop-row"><div class="prop-label">Type</div><div class="prop-value">MSI</div></div>
+          <div class="prop-row"><div class="prop-label">Location</div><div class="prop-link">C:\Program Files\…  ↗</div></div>
+          <div class="prop-row"><div class="prop-label">Rating</div><div class="prop-value"><span class="stars">★★★★☆</span></div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="sidebar-actions">
+          <div class="btn" style="flex:1;justify-content:center">Uninstall</div>
+          <div class="btn" style="flex:1;justify-content:center">Modify</div>
+        </div>
+        <div class="btn" style="justify-content:center">Find Leftovers</div>
+      </div>
+    </div>
+    <!-- Status bar -->
+    <div class="statusbar">
+      <span>77 applications</span>
+      <div class="status-sep"></div>
+      <span>2 selected</span>
+      <div class="status-sep"></div>
+      <span>Total: 1.1 GB</span>
+      <div class="spacer"></div>
+      <span>Last scan: 1:34 PM</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="screen-wrap">
+  <h2>2 · Settings Window</h2>
+  <div class="label">NavigationView · SettingsCard rows</div>
+  <div class="window">
+    <div class="title-bar">
+      <div class="app-icon"></div>
+      <span class="app-title">Settings — BCUninstaller</span>
+      <div class="chrome-btns">
+        <div class="chrome-btn">─</div>
+        <div class="chrome-btn">□</div>
+        <div class="chrome-btn close">✕</div>
+      </div>
+    </div>
+    <div class="settings-layout">
+      <div class="settings-nav">
+        <div class="nav-item" style="margin-bottom:8px;font-size:12px;color:var(--text-disabled)">Settings</div>
+        <div class="nav-item active"><span class="nav-icon">🎨</span> Appearance</div>
+        <div class="nav-item"><span class="nav-icon">🗑</span> Uninstallation</div>
+        <div class="nav-item"><span class="nav-icon">🔍</span> App Scanning</div>
+        <div class="nav-item"><span class="nav-icon">🌐</span> Online Features</div>
+        <div class="nav-item"><span class="nav-icon">⚙</span> Advanced</div>
+        <div style="margin-top:auto;padding-top:16px">
+          <div class="nav-item" style="color:var(--text-secondary)"><span class="nav-icon">ℹ</span> About</div>
+        </div>
+      </div>
+      <div class="settings-content">
+        <div class="settings-page-title">Appearance</div>
+        <div class="settings-card">
+          <div class="settings-card-icon">🌙</div>
+          <div class="settings-card-text">
+            <div class="settings-card-title">App Theme</div>
+            <div class="settings-card-desc">Choose light, dark, or follow system setting</div>
+          </div>
+          <div class="settings-card-ctrl">
+            <select class="select-ctrl"><option>System default</option><option>Light</option><option>Dark</option></select>
+          </div>
+        </div>
+        <div class="settings-card">
+          <div class="settings-card-icon">🌍</div>
+          <div class="settings-card-text">
+            <div class="settings-card-title">Language</div>
+            <div class="settings-card-desc">Interface language (restart required)</div>
+          </div>
+          <div class="settings-card-ctrl">
+            <select class="select-ctrl"><option>English</option><option>Polski</option><option>Deutsch</option></select>
+          </div>
+        </div>
+        <div class="settings-card">
+          <div class="settings-card-icon">📐</div>
+          <div class="settings-card-text">
+            <div class="settings-card-title">Show Properties Sidebar</div>
+            <div class="settings-card-desc">Display app details when an item is selected</div>
+          </div>
+          <div class="settings-card-ctrl"><div class="toggle"></div></div>
+        </div>
+        <div class="settings-card">
+          <div class="settings-card-icon">🏷</div>
+          <div class="settings-card-text">
+            <div class="settings-card-title">Show Ratings</div>
+            <div class="settings-card-desc">Display community ratings in the app list</div>
+          </div>
+          <div class="settings-card-ctrl"><div class="toggle"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="screen-wrap">
+  <h2>3 · Uninstall Progress Dialog</h2>
+  <div class="label">ContentDialog · ProgressBar · Collapsible log</div>
+  <div class="window">
+    <div class="title-bar">
+      <div class="app-icon"></div>
+      <span class="app-title">BCUninstaller</span>
+      <div class="chrome-btns">
+        <div class="chrome-btn close">✕</div>
+      </div>
+    </div>
+    <div class="dialog-scrim">
+      <div class="dialog">
+        <div class="dialog-title">Uninstalling 2 applications…</div>
+        <div>
+          <div style="font-size:13px;margin-bottom:8px">Adobe Acrobat Reader DC</div>
+          <div class="progress-track"><div class="progress-fill"></div></div>
+          <div class="progress-label" style="margin-top:4px">1 of 2 — 60%</div>
+        </div>
+        <div class="expander-header">
+          <span>▾</span> Details
+        </div>
+        <div class="log-area">
+          Preparing uninstaller…<br>
+          Running: MsiExec.exe /X {AC76BA86-7AD7-1033-7B44-AC0F074E4100}<br>
+          Waiting for process to exit…<br>
+          <span style="color:var(--accent)">✓ Adobe Acrobat Reader DC removed successfully</span><br>
+          Starting: Microsoft OneDrive…
+        </div>
+        <div class="dialog-footer">
+          <div class="btn">Cancel</div>
+          <div class="btn" style="opacity:0.5">Done</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="screen-wrap">
+  <h2>4 · Junk Remover Window</h2>
+  <div class="label">Grouped Expander list · Count badges · Footer action</div>
+  <div class="window">
+    <div class="title-bar">
+      <div class="app-icon"></div>
+      <span class="app-title">Leftover Junk — Adobe Acrobat Reader DC</span>
+      <div class="chrome-btns">
+        <div class="chrome-btn">─</div>
+        <div class="chrome-btn">□</div>
+        <div class="chrome-btn close">✕</div>
+      </div>
+    </div>
+    <div style="padding:20px">
+      <div style="font-size:14px;color:var(--text-secondary);margin-bottom:16px">
+        Found leftover files and registry entries after uninstallation.
+      </div>
+      <!-- Registry group -->
+      <div class="expander-group">
+        <div class="expander-hdr">
+          <span>▾</span>
+          🗂 Registry Keys
+          <span class="count-badge">12</span>
+          <div class="spacer"></div>
+          <span style="font-size:11px;color:var(--text-secondary);font-weight:400">Select all</span>
+        </div>
+        <div class="expander-row"><div class="cb checked" style="margin:auto">✓</div><div>HKLM\SOFTWARE\Adobe\Acrobat Reader\24.0</div><div style="text-align:right;color:var(--text-secondary)">—</div></div>
+        <div class="expander-row"><div class="cb checked" style="margin:auto">✓</div><div>HKCU\SOFTWARE\Adobe\Acrobat Reader\24.0</div><div style="text-align:right;color:var(--text-secondary)">—</div></div>
+        <div class="expander-row"><div class="cb"></div><div>HKLM\SOFTWARE\Microsoft\Windows\…\AdobeAcrobat</div><div style="text-align:right;color:var(--text-secondary)">—</div></div>
+      </div>
+      <!-- Files group -->
+      <div class="expander-group">
+        <div class="expander-hdr">
+          <span>▾</span>
+          📄 Files &amp; Folders
+          <span class="count-badge">8</span>
+          <div class="spacer"></div>
+          <span style="font-size:11px;color:var(--text-secondary);font-weight:400">Select all</span>
+        </div>
+        <div class="expander-row"><div class="cb checked" style="margin:auto">✓</div><div>C:\ProgramData\Adobe\Acrobat\24.0</div><div style="text-align:right;color:var(--text-secondary)">14 MB</div></div>
+        <div class="expander-row"><div class="cb checked" style="margin:auto">✓</div><div>C:\Users\naimur\AppData\Roaming\Adobe\Acrobat</div><div style="text-align:right;color:var(--text-secondary)">3 MB</div></div>
+        <div class="expander-row"><div class="cb"></div><div>C:\Users\naimur\AppData\Local\Adobe\Acrobat</div><div style="text-align:right;color:var(--text-secondary)">22 MB</div></div>
+      </div>
+      <!-- Footer -->
+      <div style="display:flex;align-items:center;gap:16px;margin-top:8px">
+        <div style="font-size:13px;color:var(--text-secondary)">Selected: 17 items · 39 MB to free</div>
+        <div class="spacer"></div>
+        <div class="btn">Select All</div>
+        <div class="btn accent">🗑 Remove Selected</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="screen-wrap">
+  <h2>5 · Token Reference</h2>
+  <div class="label">Colours · Typography · Radius</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;max-width:980px">
+    <div style="background:var(--card-bg);border-radius:8px;padding:12px;border:1px solid var(--stroke)">
+      <div style="height:40px;background:#FFFFFF;border:1px solid var(--stroke);border-radius:4px;margin-bottom:8px"></div>
+      <div style="font-size:12px;font-weight:600">Fill/Solid/Base</div>
+      <div style="font-size:11px;color:var(--text-secondary)">#F3F3F3 / #202020</div>
+    </div>
+    <div style="background:var(--card-bg);border-radius:8px;padding:12px;border:1px solid var(--stroke)">
+      <div style="height:40px;background:var(--accent);border-radius:4px;margin-bottom:8px"></div>
+      <div style="font-size:12px;font-weight:600">Accent/Default</div>
+      <div style="font-size:11px;color:var(--text-secondary)">#0067C0 / #60CDFF</div>
+    </div>
+    <div style="background:var(--card-bg);border-radius:8px;padding:12px;border:1px solid var(--stroke)">
+      <div style="height:40px;background:var(--text-primary);border-radius:4px;margin-bottom:8px"></div>
+      <div style="font-size:12px;font-weight:600">Text/Primary</div>
+      <div style="font-size:11px;color:var(--text-secondary)">#1A1A1A / #FFFFFF</div>
+    </div>
+    <div style="background:var(--card-bg);border-radius:8px;padding:12px;border:1px solid var(--stroke)">
+      <div style="height:40px;background:var(--text-secondary);border-radius:4px;margin-bottom:8px"></div>
+      <div style="font-size:12px;font-weight:600">Text/Secondary</div>
+      <div style="font-size:11px;color:var(--text-secondary)">#5D5D5D / #9D9D9D</div>
+    </div>
+    <div style="background:var(--card-bg);border-radius:8px;padding:12px;border:1px solid var(--stroke)">
+      <div style="height:40px;background:var(--secondary);border-radius:4px;margin-bottom:8px"></div>
+      <div style="font-size:12px;font-weight:600">Fill/Solid/Secondary</div>
+      <div style="font-size:11px;color:var(--text-secondary)">#EBEBEB / #2C2C2C</div>
+    </div>
+    <div style="background:var(--card-bg);border-radius:8px;padding:12px;border:1px solid var(--stroke)">
+      <div style="height:40px;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px">
+        <div style="height:28px;background:#0067C0;color:white;padding:0 14px;border-radius:4px;display:flex;align-items:center;font-size:12px">Button</div>
+        <div style="height:28px;background:#FFFFFF;border:1px solid var(--stroke);padding:0 14px;border-radius:4px;display:flex;align-items:center;font-size:12px">Button</div>
+      </div>
+      <div style="font-size:12px;font-weight:600">ControlCornerRadius</div>
+      <div style="font-size:11px;color:var(--text-secondary)">4px controls · 8px overlays</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

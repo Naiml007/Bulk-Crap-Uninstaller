@@ -3,6 +3,7 @@
     Apache License Version 2.0
 */
 
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -15,6 +16,7 @@ namespace BulkCrapUninstaller.Controls
         private bool _isAccent;
         private bool _isHovered;
         private bool _isPressed;
+        private int _cornerRadius = Win11Theme.ControlCornerRadius;
 
         public Win11Button()
         {
@@ -33,6 +35,12 @@ namespace BulkCrapUninstaller.Controls
         {
             get => _isAccent;
             set { _isAccent = value; Invalidate(); }
+        }
+
+        public int CornerRadius
+        {
+            get => _cornerRadius;
+            set { _cornerRadius = value; Invalidate(); }
         }
 
         protected override void OnMouseEnter(System.EventArgs e)
@@ -75,7 +83,7 @@ namespace BulkCrapUninstaller.Controls
             else
                 fill = _isPressed || _isHovered ? Win11Theme.FillSolidTertiary : Win11Theme.FillSolidSecondary;
 
-            int r = Win11Theme.ControlCornerRadius;
+            int r = Math.Min(CornerRadius, Math.Min(Width, Height) / 2);
             var rect = new Rectangle(0, 0, Width - 1, Height - 1);
 
             using (var path = RoundedRect(rect, r))

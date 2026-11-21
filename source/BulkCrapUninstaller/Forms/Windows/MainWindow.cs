@@ -9,6 +9,7 @@ using BulkCrapUninstaller.Functions.ApplicationList;
 using BulkCrapUninstaller.Functions.Tools;
 using BulkCrapUninstaller.Functions.Tracking;
 using BulkCrapUninstaller.Properties;
+using BulkCrapUninstaller.Theming;
 using Klocman.Binding.Settings;
 using Klocman.Events;
 using Klocman.Extensions;
@@ -50,6 +51,7 @@ namespace BulkCrapUninstaller.Forms
         private readonly WindowStyleController _styleController;
         private readonly AppUninstaller _appUninstaller;
         private readonly UninstallerListConfigurator _uninstallerListConfigurator;
+        private BulkCrapUninstaller.Controls.Win11CommandBar _commandBar;
 
         private readonly ListLegendWindow _listLegendWindow = new();
         private DebugWindow _debugWindow;
@@ -82,7 +84,7 @@ namespace BulkCrapUninstaller.Forms
             InitializeComponent();
 
             BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
-            _themeChangedHandler = (s, e) => { BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this); Invalidate(); };
+            _themeChangedHandler = (s, e) => { BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this); ApplyWin11ListTheme(); ApplyWin11WindowTheme(); Invalidate(); };
             BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged += _themeChangedHandler;
             FormClosed += (s2, e2) => BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged -= _themeChangedHandler;
 
@@ -93,10 +95,7 @@ namespace BulkCrapUninstaller.Forms
 
             // Finish up setting controls and window, suspend after settings have loaded
             SuspendLayout();
-            ToolStripManager.Renderer = new ToolStripProfessionalRenderer(new StandardSystemColorTable())
-            {
-                RoundedEdges = true
-            };
+            ToolStripManager.Renderer = Win11Theme.CreateToolStripRenderer();
 
             // Disable until the first list refresh finishes
             LockApplication(true);
@@ -119,6 +118,10 @@ namespace BulkCrapUninstaller.Forms
             _uninstallerListConfigurator = new UninstallerListConfigurator(this);
             _uninstallerListConfigurator.AfterFiltering += (x, y) => _uninstallerListPostProcesser.StartProcessingThread(_listView.FilteredUninstallers);
             _uninstallerListConfigurator.AfterFiltering += RefreshStatusbarTotalLabel;
+
+            SetupCommandBar();
+            ApplyWin11ListTheme();
+            ApplyWin11WindowTheme();
 
             _appUninstaller = new AppUninstaller(_listView.InitiateListRefresh, LockApplication, SetVisible);
 
@@ -225,6 +228,8 @@ namespace BulkCrapUninstaller.Forms
         {
             base.OnHandleCreated(e);
             BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
+            ApplyWin11ListTheme();
+            ApplyWin11WindowTheme();
         }
 
         protected override void OnDpiChanged(DpiChangedEventArgs e)
@@ -457,6 +462,7 @@ namespace BulkCrapUninstaller.Forms
         {
             if (disposing)
             {
+                BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged -= _themeChangedHandler;
                 try
                 {
                     components?.Dispose();
@@ -475,6 +481,176 @@ namespace BulkCrapUninstaller.Forms
         private void SearchCriteriaChanged(object sender, EventArgs e)
         {
             _uninstallerListConfigurator.UpdateColumnFiltering(_listView.AllUninstallers.Any());
+        }
+
+        private void SetupCommandBar()
+        {
+            _commandBar = new BulkCrapUninstaller.Controls.Win11CommandBar();
+            Controls.Add(_commandBar);
+            // Docked controls are laid out in reverse z-order; keep the bar below the menu.
+            Controls.SetChildIndex(_commandBar, Controls.GetChildIndex(menuStrip));
+
+            _commandBar.SearchTextChanged += (s, text) =>
+            {
+                if (_commandBar.ActiveChip != "All")
+                {
+                    _commandBar.SetActiveChip("All");
+                    everythingToolStripMenuItem_Click(this, EventArgs.Empty);
+                }
+
+                if (string.IsNullOrWhiteSpace(text))
+                    filterEditor1.Search(null, ComparisonMethod.Any);
+                else
+                    filterEditor1.Search(text, ComparisonMethod.Contains);
+            };
+
+            _commandBar.FilterChipClicked += (s, chip) =>
+            {
+                _commandBar.ClearSearch();
+                switch (chip)
+                {
+                    case "System":
+                        systemComponentsToolStripMenuItem_Click(this, EventArgs.Empty);
+                        break;
+                    case "Store":
+                        viewWindowsStoreAppsToolStripMenuItem_Click(this, EventArgs.Empty);
+                        break;
+                    case "Hidden":
+                        viewUnregisteredToolStripMenuItem_Click(this, EventArgs.Empty);
+                        break;
+                    default:
+                        everythingToolStripMenuItem_Click(this, EventArgs.Empty);
+                        break;
+                }
+            };
+        }
+
+        private void ApplyWin11ListTheme()
+        {
+            uninstallerObjectListView.Font = Win11Theme.BodyFont;
+            uninstallerObjectListView.RowHeight = 52;
+            uninstallerObjectListView.BackColor = Win11Theme.FillSolidBase;
+            uninstallerObjectListView.ForeColor = Win11Theme.TextPrimary;
+            uninstallerObjectListView.SelectedForeColor = Win11Theme.TextPrimary;
+            uninstallerObjectListView.UnfocusedSelectedForeColor = Win11Theme.TextPrimary;
+            uninstallerObjectListView.UseAlternatingBackColors = true;
+            uninstallerObjectListView.AlternateRowBackColor = Win11Theme.FillSolidSecondary;
+            uninstallerObjectListView.SelectedBackColor = Win11Theme.SelectionFill;
+            uninstallerObjectListView.UnfocusedSelectedBackColor = Win11Theme.SelectionFill;
+            uninstallerObjectListView.HeaderUsesThemes = false;
+
+            var body = Win11Theme.BodyFont;
+            uninstallerObjectListView.HeaderFormatStyle = new HeaderFormatStyle
+            {
+                Normal = new HeaderStateStyle
+                {
+                    BackColor = Win11Theme.FillSolidSecondary,
+                    ForeColor = Win11Theme.TextSecondary,
+                    Font = body
+                },
+                Hot = new HeaderStateStyle
+                {
+                    BackColor = Win11Theme.FillSolidTertiary,
+                    ForeColor = Win11Theme.TextPrimary,
+                    Font = body
+                },
+                Pressed = new HeaderStateStyle
+                {
+                    BackColor = Win11Theme.FillSolidTertiary,
+                    ForeColor = Win11Theme.TextPrimary,
+                    Font = body
+                }
+            };
+        }
+
+        private void ApplyWin11WindowTheme()
+        {
+            BackColor = Win11Theme.FillSolidBase;
+            ForeColor = Win11Theme.TextPrimary;
+
+            menuStrip.BackColor = Win11Theme.FillSolidSecondary;
+            toolStrip.BackColor = Win11Theme.FillSolidSecondary;
+            statusStrip1.BackColor = Win11Theme.FillSolidSecondary;
+            ThemeToolStripItems(menuStrip);
+            ThemeToolStripItems(toolStrip);
+            ThemeToolStripItems(statusStrip1);
+
+            settingsSidebarPanel.BackColor = Win11Theme.FillSolidSecondary;
+            splitContainer1.BackColor = Win11Theme.FillSolidBase;
+            splitContainer1.Panel1.BackColor = Win11Theme.FillSolidBase;
+            splitContainer1.Panel2.BackColor = Win11Theme.FillSolidBase;
+            listViewPanel.BackColor = Win11Theme.FillSolidBase;
+            ThemeSidebar(settingsSidebarPanel);
+
+            var renderer = Win11Theme.CreateToolStripRenderer();
+            ToolStripManager.Renderer = renderer;
+            menuStrip.Renderer = renderer;
+            toolStrip.Renderer = renderer;
+            statusStrip1.Renderer = renderer;
+            uninstallListContextMenuStrip.Renderer = renderer;
+            uninstallListContextMenuStrip.BackColor = Win11Theme.FillSolidSecondary;
+            ThemeToolStripItems(uninstallListContextMenuStrip);
+        }
+
+        private static void ThemeToolStripItems(ToolStrip strip)
+        {
+            strip.ForeColor = Win11Theme.TextPrimary;
+            foreach (ToolStripItem item in strip.Items)
+                ThemeToolStripItem(item);
+        }
+
+        private static void ThemeToolStripItem(ToolStripItem item)
+        {
+            item.ForeColor = Win11Theme.TextPrimary;
+            if (item is ToolStripDropDownItem dropDown)
+                foreach (ToolStripItem child in dropDown.DropDownItems)
+                    ThemeToolStripItem(child);
+        }
+
+        private static void ThemeSidebar(Control root)
+        {
+            foreach (Control control in root.Controls)
+            {
+                if (control is BulkCrapUninstaller.Controls.Win11Button
+                    or BulkCrapUninstaller.Controls.Win11TextBox
+                    or BulkCrapUninstaller.Controls.Win11CheckBox)
+                    continue;
+
+                if (control is GroupBox or Panel or FlowLayoutPanel or TableLayoutPanel)
+                {
+                    control.BackColor = Win11Theme.FillSolidSecondary;
+                    if (control is GroupBox)
+                        control.ForeColor = Win11Theme.TextPrimary;
+                }
+                else if (control is TextBox or ComboBox)
+                {
+                    control.BackColor = Win11Theme.FillSolidBase;
+                    control.ForeColor = Win11Theme.TextPrimary;
+                }
+                else if (control is CheckBox)
+                {
+                    control.BackColor = Color.Transparent;
+                    control.ForeColor = Win11Theme.TextPrimary;
+                }
+                else if (control is Label)
+                {
+                    control.ForeColor = Win11Theme.TextPrimary;
+                }
+                else if (control is Button btn)
+                {
+                    btn.BackColor = Win11Theme.FillSolidTertiary;
+                    btn.ForeColor = Win11Theme.TextPrimary;
+                    btn.FlatStyle = FlatStyle.Flat;
+                    btn.FlatAppearance.BorderColor = Win11Theme.Stroke;
+                }
+                else if (control is LinkLabel link)
+                {
+                    link.LinkColor = Win11Theme.AccentDefault;
+                    link.ActiveLinkColor = Win11Theme.AccentPressed;
+                }
+
+                ThemeSidebar(control);
+            }
         }
 
         public void LockApplication(bool value)
@@ -1165,7 +1341,7 @@ namespace BulkCrapUninstaller.Forms
         {
             if (!_setMan.Selected.Settings.ToolbarsShowSettings)
                 _setMan.Selected.Settings.ToolbarsShowSettings = true;
-            filterEditor1.FocusSearchbox();
+            _commandBar.FocusSearch();
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)

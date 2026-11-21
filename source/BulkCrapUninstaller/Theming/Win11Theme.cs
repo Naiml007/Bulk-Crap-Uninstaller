@@ -5,6 +5,7 @@
 
 using System;
 using System.Drawing;
+using System.Windows.Forms;
 using Microsoft.Win32;
 
 namespace BulkCrapUninstaller.Theming
@@ -72,6 +73,23 @@ namespace BulkCrapUninstaller.Theming
         // Always white text on accent fill
         public static Color AccentButtonText => Color.White;
 
+        /// <summary>
+        /// Accent blended over the base fill, used for selected list rows.
+        /// </summary>
+        public static Color SelectionFill
+        {
+            get
+            {
+                var accent = AccentDefault;
+                var background = FillSolidBase;
+                const float amount = 0.15f;
+                return Color.FromArgb(
+                    (int)(accent.R * amount + background.R * (1 - amount)),
+                    (int)(accent.G * amount + background.G * (1 - amount)),
+                    (int)(accent.B * amount + background.B * (1 - amount)));
+            }
+        }
+
         // ----- Text colors -----
         public static Color TextPrimary =>
             IsDarkMode ? Color.FromArgb(0xFF, 0xFF, 0xFF) : Color.FromArgb(0x1A, 0x1A, 0x1A);
@@ -88,6 +106,70 @@ namespace BulkCrapUninstaller.Theming
 
         // ----- Font -----
         public static Font BodyFont { get; } = CreateBodyFont();
+
+        /// <summary>
+        /// ToolStrip renderer matching the current theme.
+        /// </summary>
+        public static ToolStripRenderer CreateToolStripRenderer()
+        {
+            return new ToolStripProfessionalRenderer(new Win11ColorTable()) { RoundedEdges = true };
+        }
+
+        private sealed class Win11ColorTable : ProfessionalColorTable
+        {
+            private static Color Surface => FillSolidSecondary;
+            private static Color Hover => FillSolidTertiary;
+            private static Color Pressed => FillSolidBase;
+
+            public override Color ToolStripGradientBegin => Surface;
+            public override Color ToolStripGradientMiddle => Surface;
+            public override Color ToolStripGradientEnd => Surface;
+            public override Color ToolStripBorder => Hover;
+
+            public override Color MenuStripGradientBegin => Surface;
+            public override Color MenuStripGradientEnd => Surface;
+            public override Color StatusStripGradientBegin => Surface;
+            public override Color StatusStripGradientEnd => Surface;
+
+            public override Color MenuItemSelected => Hover;
+            public override Color MenuItemSelectedGradientBegin => Hover;
+            public override Color MenuItemSelectedGradientEnd => Hover;
+            public override Color MenuItemBorder => Hover;
+            public override Color MenuBorder => Hover;
+
+            public override Color ButtonSelectedHighlight => Hover;
+            public override Color ButtonSelectedHighlightBorder => Hover;
+            public override Color ButtonSelectedGradientBegin => Hover;
+            public override Color ButtonSelectedGradientMiddle => Hover;
+            public override Color ButtonSelectedGradientEnd => Hover;
+            public override Color ButtonPressedHighlight => Pressed;
+            public override Color ButtonPressedGradientBegin => Pressed;
+            public override Color ButtonPressedGradientMiddle => Pressed;
+            public override Color ButtonPressedGradientEnd => Pressed;
+            public override Color ButtonCheckedGradientBegin => Hover;
+            public override Color ButtonCheckedGradientMiddle => Hover;
+            public override Color ButtonCheckedGradientEnd => Hover;
+
+            public override Color CheckBackground => Surface;
+            public override Color CheckSelectedBackground => Hover;
+            public override Color CheckPressedBackground => Pressed;
+
+            public override Color ToolStripDropDownBackground => Surface;
+            public override Color ImageMarginGradientBegin => Surface;
+            public override Color ImageMarginGradientMiddle => Surface;
+            public override Color ImageMarginGradientEnd => Surface;
+            public override Color ImageMarginRevealedGradientBegin => Surface;
+            public override Color ImageMarginRevealedGradientMiddle => Surface;
+            public override Color ImageMarginRevealedGradientEnd => Surface;
+
+            public override Color OverflowButtonGradientBegin => Surface;
+            public override Color OverflowButtonGradientMiddle => Surface;
+            public override Color OverflowButtonGradientEnd => Surface;
+
+            public override Color SeparatorDark => Hover;
+            public override Color SeparatorLight => Hover;
+        }
+
 
         private static Font CreateBodyFont()
         {

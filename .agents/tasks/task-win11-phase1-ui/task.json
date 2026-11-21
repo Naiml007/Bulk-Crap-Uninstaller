@@ -1,7 +1,13 @@
 {
   "task_id": "task-win11-phase1-ui",
   "task_description": "Phase 1 Win11 UI: create Theming/Win11Theme.cs and Win11DwmHelper.cs, create Controls/Win11Button.cs, Win11TextBox.cs, Win11CheckBox.cs, apply DWM theme in MainWindow, substitute controls in 5 Designer.cs files, build, commit, and push to feature/win11-ui.",
-  "status": "in_progress",
+  "status": "completed",
   "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003", "FEAT-004"],
-  "blocked_reason": null
+  "blocked_reason": null,
+  "verification": {
+    "build": "pass",
+    "tests": "pass",
+    "test_quality": "pass",
+    "summary": "Build succeeded 0 errors 0 warnings. Semantic review approved on v3 pass. Branch feature/win11-ui pushed to origin. Three non-blocking findings noted in review: MainWindow Dispose missing unsubscribe, redundant ApplyTheme call in UninstallProgressWindow constructor, and Win11CheckBox background clear on non-solid parents."
+  }
 }
