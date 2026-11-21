@@ -79,6 +79,9 @@ namespace BulkCrapUninstaller.Forms
 
             InitializeComponent();
 
+            BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
+            BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged += (s, e) => { BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this); Invalidate(); };
+
             // Setup settings
             _setMan = new SettingTools(Settings.Default.SettingBinder, this);
             _setMan.LoadSettings();

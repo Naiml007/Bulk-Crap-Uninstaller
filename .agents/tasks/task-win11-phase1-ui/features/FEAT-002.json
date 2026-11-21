@@ -1,0 +1,24 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Create Win11Theme.cs and Win11DwmHelper.cs in a new Theming/ folder, and apply DWM theme in MainWindow constructor.",
+  "status": "in_progress",
+  "steps": [
+    "Create directory source/BulkCrapUninstaller/Theming/",
+    "Create source/BulkCrapUninstaller/Theming/Win11Theme.cs — static class BulkCrapUninstaller.Theming.Win11Theme. Include: (a) all color/font/radius token constants for both light and dark using the exact values from the design plan (see token table below); (b) static bool IsDarkMode property that reads HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize AppsUseLightTheme (returns true if value is 0 or missing); (c) static event EventHandler ThemeChanged; (d) static constructor that subscribes Microsoft.Win32.SystemEvents.UserPreferenceChanged, checks if the light/dark setting changed, and fires ThemeChanged. Use using Microsoft.Win32. Light tokens: FillSolidBase=#F3F3F3, FillSolidSecondary=#EBEBEB, FillSolidTertiary=#E0E0E0, AccentDefault=#0067C0, AccentHover=#1A6EC7, AccentPressed=#005BA3, TextPrimary=#1A1A1A, TextSecondary=#5D5D5D, TextDisabled=#A5A5A5, Stroke=Color.FromArgb(20,0,0,0), ControlCornerRadius=4, FontFamily='Segoe UI Variable' fallback 'Segoe UI' at 9pt. Dark tokens: FillSolidBase=#202020, FillSolidSecondary=#2C2C2C, AccentDefault=#60CDFF, TextPrimary=#FFFFFF, TextSecondary=#9D9D9D. Expose a static Color Get(string tokenName) or just expose individual static Color properties for each token (simpler — use properties).",
+    "Create source/BulkCrapUninstaller/Theming/Win11DwmHelper.cs — static class BulkCrapUninstaller.Theming.Win11DwmHelper. P/Invoke DwmSetWindowAttribute from dwmapi.dll. Constants: DWMWA_USE_IMMERSIVE_DARK_MODE=20, DWMWA_SYSTEMBACKDROP_TYPE=38, DWMSBT_MAINWINDOW=2. Static method ApplyTheme(Form form): (a) set DWMWA_USE_IMMERSIVE_DARK_MODE to 1 or 0 based on Win11Theme.IsDarkMode; (b) if Windows build >= 22621 (check Environment.OSVersion.Version.Build), set DWMWA_SYSTEMBACKDROP_TYPE to DWMSBT_MAINWINDOW=2; wrap both DWM calls in try/catch and silently ignore failures.",
+    "In source/BulkCrapUninstaller/Forms/Windows/MainWindow.cs constructor (public MainWindow()), AFTER the call to InitializeComponent(), add: BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this); and subscribe BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged += (s, e) => { BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this); Invalidate(); };",
+    "Add 'using BulkCrapUninstaller.Theming;' to MainWindow.cs if not already present, or use fully-qualified names."
+  ],
+  "acceptance_criteria": [
+    "Win11Theme.cs exists with IsDarkMode, ThemeChanged, and all color token properties",
+    "Win11DwmHelper.cs exists with ApplyTheme(Form) using P/Invoke",
+    "MainWindow.cs calls Win11DwmHelper.ApplyTheme(this) after InitializeComponent()",
+    "dotnet build succeeds with zero errors"
+  ],
+  "verification": [
+    "dotnet build source\\BulkCrapUninstaller\\BulkCrapUninstaller.csproj -p:Platform=\"Any CPU\" -c Release"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
