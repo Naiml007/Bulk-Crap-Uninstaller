@@ -79,6 +79,9 @@ namespace BulkCrapUninstaller.Forms
 
             InitializeComponent();
 
+            // Win11: dark title bar + Mica backdrop
+            this.Load += (s, e) => Win11Theme.ApplyBackdrop(this);
+
             // Setup settings
             _setMan = new SettingTools(Settings.Default.SettingBinder, this);
             _setMan.LoadSettings();
