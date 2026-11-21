@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "Create Win11Theme.cs and Win11DwmHelper.cs in a new Theming/ folder, and apply DWM theme in MainWindow constructor.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create directory source/BulkCrapUninstaller/Theming/",
     "Create source/BulkCrapUninstaller/Theming/Win11Theme.cs — static class BulkCrapUninstaller.Theming.Win11Theme. Include: (a) all color/font/radius token constants for both light and dark using the exact values from the design plan (see token table below); (b) static bool IsDarkMode property that reads HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize AppsUseLightTheme (returns true if value is 0 or missing); (c) static event EventHandler ThemeChanged; (d) static constructor that subscribes Microsoft.Win32.SystemEvents.UserPreferenceChanged, checks if the light/dark setting changed, and fires ThemeChanged. Use using Microsoft.Win32. Light tokens: FillSolidBase=#F3F3F3, FillSolidSecondary=#EBEBEB, FillSolidTertiary=#E0E0E0, AccentDefault=#0067C0, AccentHover=#1A6EC7, AccentPressed=#005BA3, TextPrimary=#1A1A1A, TextSecondary=#5D5D5D, TextDisabled=#A5A5A5, Stroke=Color.FromArgb(20,0,0,0), ControlCornerRadius=4, FontFamily='Segoe UI Variable' fallback 'Segoe UI' at 9pt. Dark tokens: FillSolidBase=#202020, FillSolidSecondary=#2C2C2C, AccentDefault=#60CDFF, TextPrimary=#FFFFFF, TextSecondary=#9D9D9D. Expose a static Color Get(string tokenName) or just expose individual static Color properties for each token (simpler — use properties).",
@@ -20,5 +20,5 @@
     "dotnet build source\\BulkCrapUninstaller\\BulkCrapUninstaller.csproj -p:Platform=\"Any CPU\" -c Release"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Build succeeded with 0 errors, 0 warnings. Win11Theme.cs and Win11DwmHelper.cs created in Theming/. MainWindow constructor patched after InitializeComponent(). Committed on feature/win11-ui."
 }
