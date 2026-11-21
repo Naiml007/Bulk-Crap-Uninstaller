@@ -2,7 +2,7 @@
   "id": "FEAT-004",
   "type": "feat",
   "description": "Substitute Button/TextBox/CheckBox with Win11Button/Win11TextBox/Win11CheckBox in all 5 Designer.cs files, then build, commit, and push.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Read each Designer.cs file fully before editing. The substitution rules are: (1) declaration lines 'private System.Windows.Forms.Button fieldName;' become 'private BulkCrapUninstaller.Controls.Win11Button fieldName;', (2) instantiation lines 'fieldName = new System.Windows.Forms.Button();' become 'fieldName = new BulkCrapUninstaller.Controls.Win11Button();', (3) same pattern for TextBox->Win11TextBox and CheckBox->Win11CheckBox, (4) for files that use short names (e.g. 'new Button()' and 'private Button fieldName'), substitute with 'new Win11Button()' and 'private Win11Button fieldName', and add 'using BulkCrapUninstaller.Controls;' at the top if not already present.",
     "Apply substitutions to source/BulkCrapUninstaller/Forms/Windows/MainWindow.Designer.cs: buttonAdvFiltering (Button->Win11Button). Check for TextBox and CheckBox instances too.",
@@ -26,5 +26,5 @@
     "git -C . log --oneline -3"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Build passed with 0 errors, 0 warnings. Pushed to origin/feature/win11-ui (new branch). BeginUninstallTaskWizard.Designer.cs already had 'using BulkCrapUninstaller.Controls;' from FEAT-003; used fully-qualified BulkCrapUninstaller.Controls.Win11Button per instructions. SettingsWindow.Designer.cs had textBoxProgramFolders (TextBox) not in scope for substitution per instructions - left unchanged."
 }
