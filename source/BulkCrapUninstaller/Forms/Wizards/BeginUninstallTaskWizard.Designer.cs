@@ -19,6 +19,8 @@ namespace BulkCrapUninstaller.Forms
             {
                 components.Dispose();
             }
+            if (disposing)
+                BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged -= _themeChangedHandler;
             base.Dispose(disposing);
         }
 

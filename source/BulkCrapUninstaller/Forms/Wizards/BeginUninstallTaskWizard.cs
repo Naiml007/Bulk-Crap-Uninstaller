@@ -22,20 +22,26 @@ namespace BulkCrapUninstaller.Forms
         private int _previousPageNumber;
         private bool _quiet;
         private ICollection<ApplicationUninstallerEntry> _selectedUninstallers;
+        private EventHandler _themeChangedHandler;
 
         public BeginUninstallTaskWizard()
         {
             InitializeComponent();
 
-            BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
-            EventHandler themeHandler = (s, e) => BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
-            BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged += themeHandler;
-            FormClosed += (s, e) => BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged -= themeHandler;
+            _themeChangedHandler = (s, e) => BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
+            BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged += _themeChangedHandler;
+            FormClosed += (s, e) => BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged -= _themeChangedHandler;
 
             Icon = MessageBoxes.DefaultOwner.Icon;
             DialogResult = DialogResult.Cancel;
 
             tabControl1.TabIndex = 0;
+        }
+
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+            BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
         }
 
         private int PageNumber

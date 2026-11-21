@@ -33,15 +33,15 @@ namespace BulkCrapUninstaller.Forms
 
         private bool _confirmLowConfidenceMessageShown;
         private TypedObjectListView<IJunkResult> _listViewWrapper;
+        private EventHandler _themeChangedHandler;
 
         public JunkRemoveWindow(IEnumerable<IJunkResult> junk)
         {
             InitializeComponent();
 
-            BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
-            EventHandler themeHandler = (s, e) => BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
-            BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged += themeHandler;
-            FormClosed += (s, e) => BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged -= themeHandler;
+            _themeChangedHandler = (s, e) => BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
+            BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged += _themeChangedHandler;
+            FormClosed += (s, e) => BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged -= _themeChangedHandler;
 
             Icon = Resources.Icon_Logo;
 
@@ -64,6 +64,12 @@ namespace BulkCrapUninstaller.Forms
         }
 
         public IEnumerable<IJunkResult> SelectedJunk => _listViewWrapper.CheckedObjects;
+
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+            BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
+        }
 
         private void buttonAccept_Click(object sender, EventArgs e)
         {

@@ -221,6 +221,12 @@ namespace BulkCrapUninstaller.Forms
             uninstallerObjectListView.ContextMenuStrip = uninstallListContextMenuStrip;
         }
 
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+            BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
+        }
+
         protected override void OnDpiChanged(DpiChangedEventArgs e)
         {
             base.OnDpiChanged(e);

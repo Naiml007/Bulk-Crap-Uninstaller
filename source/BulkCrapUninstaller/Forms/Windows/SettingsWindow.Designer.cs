@@ -22,6 +22,8 @@ namespace BulkCrapUninstaller.Forms
             {
                 components.Dispose();
             }
+            if (disposing)
+                BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged -= _themeChangedHandler;
             base.Dispose(disposing);
         }
 
@@ -86,7 +88,7 @@ namespace BulkCrapUninstaller.Forms
             tabPageDetection = new TabPage();
             groupBoxAppStores = new GroupBox();
             labelWinUpdateInfo = new Label();
-            checkBoxScanWinUpdates = new CheckBox();
+            checkBoxScanWinUpdates = new Win11CheckBox();
             labelWinFeatureInfo = new Label();
             checkBoxScanWinFeatures = new Win11CheckBox();
             checkBoxScanStoreApps = new Win11CheckBox();
@@ -96,9 +98,9 @@ namespace BulkCrapUninstaller.Forms
             checkBoxChoco = new Win11CheckBox();
             groupBox1 = new GroupBox();
             flowLayoutPanel7 = new FlowLayoutPanel();
-            checkBoxScanRegistry = new CheckBox();
-            checkBoxScanDrives = new CheckBox();
-            checkBoxPreDefined = new CheckBox();
+            checkBoxScanRegistry = new Win11CheckBox();
+            checkBoxScanDrives = new Win11CheckBox();
+            checkBoxPreDefined = new Win11CheckBox();
             tabPageExternal = new TabPage();
             tabPageFolders = new TabPage();
             groupBoxProgramFolders = new GroupBox();
@@ -841,15 +843,15 @@ namespace BulkCrapUninstaller.Forms
         private Win11CheckBox checkBoxScanSteam;
         private Win11CheckBox checkBoxScanStoreApps;
         private Win11CheckBox checkBoxScanWinFeatures;
-        private CheckBox checkBoxScanWinUpdates;
+        private Win11CheckBox checkBoxScanWinUpdates;
         private Label labelWinFeatureInfo;
         private Label labelWinUpdateInfo;
         private Win11CheckBox checkBoxAutoInstallFolderDetect;
         private GroupBox groupBox1;
         private FlowLayoutPanel flowLayoutPanel7;
-        private CheckBox checkBoxScanRegistry;
-        private CheckBox checkBoxScanDrives;
-        private CheckBox checkBoxPreDefined;
+        private Win11CheckBox checkBoxScanRegistry;
+        private Win11CheckBox checkBoxScanDrives;
+        private Win11CheckBox checkBoxPreDefined;
         private TabPage tabPageInterface;
         private GroupBox groupBoxLanguage;
         private GroupBox groupBoxBackup;

@@ -21,6 +21,7 @@ namespace BulkCrapUninstaller.Forms
     {
         private readonly SettingBinder<Settings> _settings = Settings.Default.SettingBinder;
         private bool _restartNeeded;
+        private EventHandler _themeChangedHandler;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int OpenedTab { get { return tabControl.SelectedIndex; } set { tabControl.SelectedIndex = value; } }
@@ -28,11 +29,15 @@ namespace BulkCrapUninstaller.Forms
         public SettingsWindow()
         {
             InitializeComponent();
+            _themeChangedHandler = (s, e) => BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
+            BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged += _themeChangedHandler;
+            FormClosed += (s, e) => BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged -= _themeChangedHandler;
+        }
+
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
             BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
-            EventHandler handler = null;
-            handler = (s, e) => BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
-            BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged += handler;
-            FormClosed += (s, e) => BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged -= handler;
         }
 
         protected override void OnLoad(EventArgs e)

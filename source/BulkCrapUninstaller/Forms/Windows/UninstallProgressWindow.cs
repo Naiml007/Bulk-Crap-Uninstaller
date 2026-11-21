@@ -35,6 +35,7 @@ namespace BulkCrapUninstaller.Forms
         private static Func<IEnumerable<ApplicationUninstallerEntry>, bool> _uninstallManuallyAction;
 
         private int _sleepTimePassed;
+        private EventHandler _themeChangedHandler;
 
         public static void ShowUninstallDialog(BulkUninstallTask status, Func<IEnumerable<ApplicationUninstallerEntry>, bool> uninstallManuallyAction)
         {
@@ -45,6 +46,12 @@ namespace BulkCrapUninstaller.Forms
 
                 uninstallWindow.ShowDialog(MessageBoxes.DefaultOwner);
             }
+        }
+
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+            BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
         }
 
         protected override void OnShown(EventArgs e)
@@ -65,9 +72,9 @@ namespace BulkCrapUninstaller.Forms
             InitializeComponent();
 
             BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
-            EventHandler themeHandler = (s, e) => BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
-            BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged += themeHandler;
-            FormClosed += (s, e) => BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged -= themeHandler;
+            _themeChangedHandler = (s, e) => BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
+            BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged += _themeChangedHandler;
+            FormClosed += (s, e) => BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged -= _themeChangedHandler;
 
             Text += " - Bulk Crap Uninstaller";
 
