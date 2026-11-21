@@ -28,6 +28,11 @@ namespace BulkCrapUninstaller.Forms
         public SettingsWindow()
         {
             InitializeComponent();
+            BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
+            EventHandler handler = null;
+            handler = (s, e) => BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
+            BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged += handler;
+            FormClosed += (s, e) => BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged -= handler;
         }
 
         protected override void OnLoad(EventArgs e)

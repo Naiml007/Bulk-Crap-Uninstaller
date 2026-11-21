@@ -44,8 +44,7 @@ namespace BulkCrapUninstaller.Controls
                     using (var brush = new SolidBrush(Win11Theme.AccentDefault))
                         g.FillPath(brush, path);
 
-                    using var checkFont = new Font("Segoe UI", 8f, FontStyle.Regular, GraphicsUnit.Point);
-                    TextRenderer.DrawText(g, "\u2713", checkFont, boxRect, Color.White,
+                    TextRenderer.DrawText(g, "\u2713", Win11Theme.BodyFont, boxRect, Color.White,
                         TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine);
                 }
                 else

@@ -72,6 +72,8 @@ namespace BulkCrapUninstaller.Forms
 
         private readonly UninstallerListPostProcesser _uninstallerListPostProcesser;
 
+        private System.EventHandler _themeChangedHandler;
+
         public MainWindow()
         {
             Opacity = 0;
@@ -80,7 +82,9 @@ namespace BulkCrapUninstaller.Forms
             InitializeComponent();
 
             BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
-            BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged += (s, e) => { BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this); Invalidate(); };
+            _themeChangedHandler = (s, e) => { BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this); Invalidate(); };
+            BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged += _themeChangedHandler;
+            FormClosed += (s2, e2) => BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged -= _themeChangedHandler;
 
             // Setup settings
             _setMan = new SettingTools(Settings.Default.SettingBinder, this);

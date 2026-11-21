@@ -64,6 +64,11 @@ namespace BulkCrapUninstaller.Forms
         {
             InitializeComponent();
 
+            BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
+            EventHandler themeHandler = (s, e) => BulkCrapUninstaller.Theming.Win11DwmHelper.ApplyTheme(this);
+            BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged += themeHandler;
+            FormClosed += (s, e) => BulkCrapUninstaller.Theming.Win11Theme.ThemeChanged -= themeHandler;
+
             Text += " - Bulk Crap Uninstaller";
 
             Opacity = 0;

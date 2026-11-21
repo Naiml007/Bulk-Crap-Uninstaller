@@ -19,6 +19,21 @@ namespace BulkCrapUninstaller.Controls
             BorderStyle = BorderStyle.None;
             BackColor = Win11Theme.FillSolidBase;
             ForeColor = Win11Theme.TextPrimary;
+            Win11Theme.ThemeChanged += OnThemeChanged;
+        }
+
+        private void OnThemeChanged(object sender, System.EventArgs e)
+        {
+            BackColor = Win11Theme.FillSolidBase;
+            ForeColor = Win11Theme.TextPrimary;
+            Invalidate();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+                Win11Theme.ThemeChanged -= OnThemeChanged;
+            base.Dispose(disposing);
         }
 
         protected override void OnGotFocus(System.EventArgs e)
