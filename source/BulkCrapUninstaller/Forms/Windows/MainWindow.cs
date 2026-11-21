@@ -79,6 +79,25 @@ namespace BulkCrapUninstaller.Forms
 
             InitializeComponent();
 
+            // Win11 Phase 2: modern CommandBar (search + filter chips) above the legacy toolbar
+            var commandBar = new Panel
+            {
+                Dock = DockStyle.Top,
+                Height = 44,
+                Padding = new Padding(8, 6, 8, 6),
+                BackColor = Win11Theme.Surface
+            };
+            var searchBox = new TextBox
+            {
+                Dock = DockStyle.Left,
+                Width = 260,
+                PlaceholderText = "Search installed apps...",
+                BorderStyle = BorderStyle.FixedSingle
+            };
+            commandBar.Controls.Add(searchBox);
+            Controls.Add(commandBar);
+            commandBar.BringToFront();
+
             // Win11: dark title bar + Mica backdrop + control styling
             this.Load += (s, e) => Win11Theme.ApplyToForm(this);
 
