@@ -1,0 +1,22 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Create Win11Button.cs, Win11TextBox.cs, and Win11CheckBox.cs custom controls in source/BulkCrapUninstaller/Controls/.",
+  "status": "completed",
+  "steps": [
+    "Create source/BulkCrapUninstaller/Controls/Win11Button.cs — namespace BulkCrapUninstaller.Controls. Extends System.Windows.Forms.Button. Set SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true) in constructor. IsAccent bool property (default false). Track _isHovered and _isPressed via OnMouseEnter/Leave/Down/Up overrides (call base). Override OnPaint: (a) choose fill color based on IsAccent+state (AccentDefault/Hover/Pressed vs FillSolidSecondary/Tertiary/Tertiary) from Win11Theme; (b) FillRectangle with that color; (c) draw rounded rect outline using GraphicsPath with ControlCornerRadius=4 and Win11Theme.Stroke color; (d) draw text centered with Win11Theme.TextPrimary (or white if IsAccent) using the control Font. Use SmoothingMode.AntiAlias. All colors come from Win11Theme static properties so dark/light is automatic.",
+    "Create source/BulkCrapUninstaller/Controls/Win11TextBox.cs — namespace BulkCrapUninstaller.Controls. Extends System.Windows.Forms.TextBox. Override WndProc to intercept WM_PAINT (0x000F) and WM_NCPAINT (0x0085): call base then draw custom border. In constructor: BorderStyle = BorderStyle.None; set padding. Subscribe to GotFocus/LostFocus to trigger Invalidate on the parent container. Override OnPaint if accessible, otherwise override WndProc: draw 1px stroke border normally, 2px accent-colored bottom line on focus, with ControlCornerRadius=4 clip via Region. Set BackColor from Win11Theme.FillSolidBase and ForeColor from Win11Theme.TextPrimary in constructor.",
+    "Create source/BulkCrapUninstaller/Controls/Win11CheckBox.cs — namespace BulkCrapUninstaller.Controls. Extends System.Windows.Forms.CheckBox. Set Appearance = Appearance.Normal, AutoSize = true in constructor. Set SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.DoubleBuffer, true). Override OnPaint: draw 16x16 rounded rect box at left (4px radius) with 1px stroke; if Checked fill with Win11Theme.AccentDefault and draw '✓' glyph in white, else fill with FillSolidBase. Draw the Text label to the right with Win11Theme.TextPrimary color using Win11Theme.BodyFont. Use e.Graphics.SmoothingMode = AntiAlias."
+  ],
+  "acceptance_criteria": [
+    "Win11Button.cs exists and compiles; IsAccent property works; hover/pressed states tracked",
+    "Win11TextBox.cs exists and compiles; custom border paint logic present",
+    "Win11CheckBox.cs exists and compiles; owner-draw with rounded checkbox",
+    "dotnet build succeeds with zero errors"
+  ],
+  "verification": [
+    "dotnet build source\\BulkCrapUninstaller\\BulkCrapUninstaller.csproj -p:Platform=\"Any CPU\" -c Release"
+  ],
+  "blocked_reason": null,
+  "findings": "Build succeeded with 0 errors. All three controls compile cleanly on the feature/win11-ui branch."
+}
