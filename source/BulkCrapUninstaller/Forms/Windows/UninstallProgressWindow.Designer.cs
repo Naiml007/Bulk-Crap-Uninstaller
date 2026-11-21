@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using BulkCrapUninstaller.Controls;
 using BulkCrapUninstaller.Functions.Tracking;
 
 namespace BulkCrapUninstaller.Forms
@@ -37,7 +38,7 @@ namespace BulkCrapUninstaller.Forms
             ComponentResourceManager resources = new ComponentResourceManager(typeof(UninstallProgressWindow));
             progressBar1 = new ProgressBar();
             label1 = new Label();
-            buttonClose = new Button();
+            buttonClose = new Win11Button();
             olvColumnStatus = new OLVColumn();
             olvColumnIsSilent = new OLVColumn();
             olvColumnName = new OLVColumn();
@@ -73,7 +74,7 @@ namespace BulkCrapUninstaller.Forms
             flowLayoutPanel1 = new FlowLayoutPanel();
             forceUpdateTimer = new Timer(components);
             flowLayoutPanel2 = new FlowLayoutPanel();
-            checkBoxFinishSleep = new CheckBox();
+            checkBoxFinishSleep = new Win11CheckBox();
             sleepTimer = new Timer(components);
             ((ISupportInitialize)objectListView1).BeginInit();
             contextMenuStrip1.SuspendLayout();
@@ -371,7 +372,7 @@ namespace BulkCrapUninstaller.Forms
 
         private ProgressBar progressBar1;
         private Label label1;
-        private Button buttonClose;
+        private Win11Button buttonClose;
         private OLVColumn olvColumnStatus;
         private OLVColumn olvColumnIsSilent;
         private OLVColumn olvColumnName;
@@ -407,7 +408,7 @@ namespace BulkCrapUninstaller.Forms
         private ToolStripMenuItem openInstallDirectoryToolStripMenuItem;
         private ToolStripMenuItem propertiesToolStripMenuItem;
         private FlowLayoutPanel flowLayoutPanel2;
-        private CheckBox checkBoxFinishSleep;
+        private Win11CheckBox checkBoxFinishSleep;
         private Timer sleepTimer;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows.Forms;
+using BulkCrapUninstaller.Controls;
 using BulkCrapUninstaller.Functions.Tracking;
 
 namespace BulkCrapUninstaller.Forms
@@ -34,21 +35,21 @@ namespace BulkCrapUninstaller.Forms
         {
             ComponentResourceManager resources = new ComponentResourceManager(typeof(SettingsWindow));
             splitContainer1 = new SplitContainer();
-            textBoxPreUninstall = new TextBox();
+            textBoxPreUninstall = new Win11TextBox();
             label5 = new Label();
-            textBoxPostUninstall = new TextBox();
+            textBoxPostUninstall = new Win11TextBox();
             label6 = new Label();
             groupBoxMisc = new GroupBox();
             flowLayoutPanel3 = new FlowLayoutPanel();
-            checkBoxColorblind = new CheckBox();
-            checkBoxDpiaware = new CheckBox();
+            checkBoxColorblind = new Win11CheckBox();
+            checkBoxDpiaware = new Win11CheckBox();
             panel5 = new Panel();
             comboBoxDoubleClick = new ComboBox();
             label3 = new Label();
-            checkBoxAutoLoad = new CheckBox();
-            checkBoxRatings = new CheckBox();
-            checkBoxUpdateSearch = new CheckBox();
-            checkBoxSendStats = new CheckBox();
+            checkBoxAutoLoad = new Win11CheckBox();
+            checkBoxRatings = new Win11CheckBox();
+            checkBoxUpdateSearch = new Win11CheckBox();
+            checkBoxSendStats = new Win11CheckBox();
             panel3 = new Panel();
             comboBoxLanguage = new ComboBox();
             label9 = new Label();
@@ -61,9 +62,9 @@ namespace BulkCrapUninstaller.Forms
             radioButtonBackupNever = new RadioButton();
             radioButtonBackupAuto = new RadioButton();
             flowLayoutPanel1 = new FlowLayoutPanel();
-            checkBoxShowAllBadJunk = new CheckBox();
-            checkBoxLoud = new CheckBox();
-            checkBoxNeverFeedback = new CheckBox();
+            checkBoxShowAllBadJunk = new Win11CheckBox();
+            checkBoxLoud = new Win11CheckBox();
+            checkBoxNeverFeedback = new Win11CheckBox();
             panel1 = new Panel();
             comboBoxJunk = new ComboBox();
             label1 = new Label();
@@ -74,7 +75,7 @@ namespace BulkCrapUninstaller.Forms
             checkBoxEnableExternal = new CheckBox();
             flowLayoutPanel2 = new FlowLayoutPanel();
             label7 = new Label();
-            button2 = new Button();
+            button2 = new Win11Button();
             tabControl = new TabControl();
             tabPageGeneral = new TabPage();
             propertiesSidebar1 = new BulkCrapUninstaller.Controls.PropertiesSidebar();
@@ -792,26 +793,26 @@ namespace BulkCrapUninstaller.Forms
         #endregion
 
         private GroupBox groupBoxMessages;
-        private CheckBox checkBoxLoud;
+        private Win11CheckBox checkBoxLoud;
         private ComboBox comboBoxRestore;
         private ComboBox comboBoxJunk;
         private Label label2;
         private Label label1;
-        private Button button2;
+        private Win11Button button2;
         private GroupBox groupBoxMisc;
-        private CheckBox checkBoxUpdateSearch;
+        private Win11CheckBox checkBoxUpdateSearch;
         private UsageTracker usageTracker1;
         private GroupBox groupBoxExternal;
         private FlowLayoutPanel flowLayoutPanel1;
         private Panel panel1;
         private Panel panel2;
         private FlowLayoutPanel flowLayoutPanel3;
-        private CheckBox checkBoxSendStats;
+        private Win11CheckBox checkBoxSendStats;
         private FlowLayoutPanel flowLayoutPanel2;
         private Label label5;
-        private TextBox textBoxPreUninstall;
+        private Win11TextBox textBoxPreUninstall;
         private Label label6;
-        private TextBox textBoxPostUninstall;
+        private Win11TextBox textBoxPostUninstall;
         private Label label7;
         private CheckBox checkBoxEnableExternal;
         private Panel panel3;
@@ -829,12 +830,12 @@ namespace BulkCrapUninstaller.Forms
         private GroupBox groupBoxProgramFolders;
         private Label labelProgramFolders;
         private TextBox textBoxProgramFolders;
-        private CheckBox checkBoxAutoLoad;
-        private CheckBox checkBoxRatings;
+        private Win11CheckBox checkBoxAutoLoad;
+        private Win11CheckBox checkBoxRatings;
         private TabPage tabPageUninstallation;
         private Controls.UninstallationSettings uninstallationSettings1;
-        private CheckBox checkBoxShowAllBadJunk;
-        private CheckBox checkBoxNeverFeedback;
+        private Win11CheckBox checkBoxShowAllBadJunk;
+        private Win11CheckBox checkBoxNeverFeedback;
         private TabPage tabPageDetection;
         private GroupBox groupBoxAppStores;
         private CheckBox checkBoxScanSteam;
@@ -863,9 +864,9 @@ namespace BulkCrapUninstaller.Forms
         private CheckBox checkBoxChoco;
         private CheckBox checkBoxOculus;
         private CheckBox checkBoxRemovable;
-        private CheckBox checkBoxColorblind;
+        private Win11CheckBox checkBoxColorblind;
         private CheckBox checkBoxScoop;
-        private CheckBox checkBoxDpiaware;
+        private Win11CheckBox checkBoxDpiaware;
         private GroupBox groupBox2;
         private FlowLayoutPanel flowLayoutPanel4;
         private Panel panel5;

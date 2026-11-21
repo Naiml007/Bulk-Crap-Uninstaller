@@ -1,0 +1,24 @@
+{
+  "project_type": "WinForms .NET 8 (net8.0-windows10.0.18362.0) desktop app — Bulk Crap Uninstaller",
+  "language": "C#",
+  "build_system": "dotnet",
+  "test_framework": "dotnet test (xUnit-style, project BulkCrapUninstallerTests)",
+  "build_command": "dotnet build source\\BulkCrapUninstaller\\BulkCrapUninstaller.csproj -p:Platform=\"Any CPU\" -c Release",
+  "test_command": "cd source\\BulkCrapUninstallerTests && dotnet test .\\BulkCrapUninstallerTests.csproj -p:Platform=x86",
+  "verification_instructions": "1. Run build command and confirm zero errors. 2. Run test command. 3. Confirm branch is feature/win11-ui.",
+  "snapshot_or_generated_files": "None relevant to this task.",
+  "setup_instructions": "dotnet is available. No additional setup needed.",
+  "environment_constraints": "Windows only (WinForms, P/Invoke). Branch: feature/win11-ui (already checked out).",
+  "contribution_requirements": "No special contribution requirements that affect this task.",
+  "key_patterns": "Designer.cs files use fully-qualified System.Windows.Forms.Button etc. in BeginUninstallTaskWizard; other Designer.cs files use unqualified 'new Button()'. Field declarations are in separate partial class sections. The BulkCrapUninstaller project namespace is BulkCrapUninstaller. Controls subclasses live under Controls/ folder. New Theming/ folder needs to be created.",
+  "relevant_files": [
+    "source/BulkCrapUninstaller/BulkCrapUninstaller.csproj",
+    "source/BulkCrapUninstaller/Forms/Windows/MainWindow.cs",
+    "source/BulkCrapUninstaller/Forms/Windows/MainWindow.Designer.cs",
+    "source/BulkCrapUninstaller/Forms/Windows/SettingsWindow.Designer.cs",
+    "source/BulkCrapUninstaller/Forms/Windows/UninstallProgressWindow.Designer.cs",
+    "source/BulkCrapUninstaller/Forms/Windows/JunkRemoveWindow.Designer.cs",
+    "source/BulkCrapUninstaller/Forms/Wizards/BeginUninstallTaskWizard.Designer.cs"
+  ],
+  "directory_structure": "source/BulkCrapUninstaller/ — main WinForms project. Forms/Windows/ — main windows. Forms/Wizards/ — wizard forms. Controls/ — existing custom controls (AdvancedClipboardCopy.cs etc). Controls/Settings/ — PropertiesSidebar. Theming/ does NOT exist yet, must be created."
+}

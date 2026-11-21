@@ -33,10 +33,10 @@ namespace BulkCrapUninstaller.Forms
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BeginUninstallTaskWizard));
             panelNavigation = new System.Windows.Forms.Panel();
             labelProgress = new System.Windows.Forms.Label();
-            buttonExit = new System.Windows.Forms.Button();
-            buttonPrev = new System.Windows.Forms.Button();
+            buttonExit = new BulkCrapUninstaller.Controls.Win11Button();
+            buttonPrev = new BulkCrapUninstaller.Controls.Win11Button();
             panel4 = new System.Windows.Forms.Panel();
-            buttonNext = new System.Windows.Forms.Button();
+            buttonNext = new BulkCrapUninstaller.Controls.Win11Button();
             panel1 = new System.Windows.Forms.Panel();
             tabControl1 = new TabControlWithoutHeader();
             tabPage1 = new System.Windows.Forms.TabPage();
@@ -71,7 +71,7 @@ namespace BulkCrapUninstaller.Forms
             label9 = new System.Windows.Forms.Label();
             labelApps = new System.Windows.Forms.Label();
             label7 = new System.Windows.Forms.Label();
-            button2 = new System.Windows.Forms.Button();
+            button2 = new BulkCrapUninstaller.Controls.Win11Button();
             flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             label6 = new System.Windows.Forms.Label();
             panelNavigation.SuspendLayout();
@@ -413,10 +413,10 @@ namespace BulkCrapUninstaller.Forms
         #endregion
         private System.Windows.Forms.Panel panelNavigation;
         private System.Windows.Forms.Label labelProgress;
-        private System.Windows.Forms.Button buttonExit;
-        private System.Windows.Forms.Button buttonPrev;
+        private BulkCrapUninstaller.Controls.Win11Button buttonExit;
+        private BulkCrapUninstaller.Controls.Win11Button buttonPrev;
         private System.Windows.Forms.Panel panel4;
-        private System.Windows.Forms.Button buttonNext;
+        private BulkCrapUninstaller.Controls.Win11Button buttonNext;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Panel panel1;
         private TabControlWithoutHeader tabControl1;
@@ -432,7 +432,7 @@ namespace BulkCrapUninstaller.Forms
         private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Button button2;
+        private BulkCrapUninstaller.Controls.Win11Button button2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Label labelOther;
         private System.Windows.Forms.Label label19;

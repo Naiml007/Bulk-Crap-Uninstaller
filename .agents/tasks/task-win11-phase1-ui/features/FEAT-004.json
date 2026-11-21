@@ -1,0 +1,30 @@
+{
+  "id": "FEAT-004",
+  "type": "feat",
+  "description": "Substitute Button/TextBox/CheckBox with Win11Button/Win11TextBox/Win11CheckBox in all 5 Designer.cs files, then build, commit, and push.",
+  "status": "in_progress",
+  "steps": [
+    "Read each Designer.cs file fully before editing. The substitution rules are: (1) declaration lines 'private System.Windows.Forms.Button fieldName;' become 'private BulkCrapUninstaller.Controls.Win11Button fieldName;', (2) instantiation lines 'fieldName = new System.Windows.Forms.Button();' become 'fieldName = new BulkCrapUninstaller.Controls.Win11Button();', (3) same pattern for TextBox->Win11TextBox and CheckBox->Win11CheckBox, (4) for files that use short names (e.g. 'new Button()' and 'private Button fieldName'), substitute with 'new Win11Button()' and 'private Win11Button fieldName', and add 'using BulkCrapUninstaller.Controls;' at the top if not already present.",
+    "Apply substitutions to source/BulkCrapUninstaller/Forms/Windows/MainWindow.Designer.cs: buttonAdvFiltering (Button->Win11Button). Check for TextBox and CheckBox instances too.",
+    "Apply substitutions to source/BulkCrapUninstaller/Forms/Windows/SettingsWindow.Designer.cs: textBoxPreUninstall, textBoxPostUninstall (TextBox->Win11TextBox); checkBoxColorblind, checkBoxDpiaware, checkBoxAutoLoad, checkBoxRatings, checkBoxUpdateSearch, checkBoxSendStats, checkBoxShowAllBadJunk, checkBoxLoud, checkBoxNeverFeedback (CheckBox->Win11CheckBox); button2 (Button->Win11Button).",
+    "Apply substitutions to source/BulkCrapUninstaller/Forms/Windows/UninstallProgressWindow.Designer.cs: buttonClose (Button->Win11Button); checkBoxFinishSleep (CheckBox->Win11CheckBox).",
+    "Apply substitutions to source/BulkCrapUninstaller/Forms/Windows/JunkRemoveWindow.Designer.cs: buttonCancel, buttonAccept, buttonExport (Button->Win11Button); checkBoxHideLowConfidence (CheckBox->Win11CheckBox).",
+    "Apply substitutions to source/BulkCrapUninstaller/Forms/Wizards/BeginUninstallTaskWizard.Designer.cs: buttonExit, buttonPrev, buttonNext, button2 — all 'new System.Windows.Forms.Button()' become 'new BulkCrapUninstaller.Controls.Win11Button()'. Also fix field declarations in the partial class (search for 'System.Windows.Forms.Button' field declarations and replace with 'BulkCrapUninstaller.Controls.Win11Button').",
+    "Run dotnet build and fix any compilation errors (e.g. if a field type was missed in the declaration section of a Designer.cs, or if a using directive is missing).",
+    "Once build passes with zero errors, run: git -C <workspace> add source/BulkCrapUninstaller/Theming/ source/BulkCrapUninstaller/Controls/Win11Button.cs source/BulkCrapUninstaller/Controls/Win11TextBox.cs source/BulkCrapUninstaller/Controls/Win11CheckBox.cs source/BulkCrapUninstaller/Forms/Windows/MainWindow.cs source/BulkCrapUninstaller/Forms/Windows/MainWindow.Designer.cs source/BulkCrapUninstaller/Forms/Windows/SettingsWindow.Designer.cs source/BulkCrapUninstaller/Forms/Windows/UninstallProgressWindow.Designer.cs source/BulkCrapUninstaller/Forms/Windows/JunkRemoveWindow.Designer.cs source/BulkCrapUninstaller/Forms/Wizards/BeginUninstallTaskWizard.Designer.cs",
+    "Commit: git commit -m 'feat(ui): Phase 1 – Win11 theme tokens, DWM Mica/dark-title-bar, Win11Button/TextBox/CheckBox controls'",
+    "Push: git push origin feature/win11-ui"
+  ],
+  "acceptance_criteria": [
+    "All 5 Designer.cs files have Win11Button/Win11TextBox/Win11CheckBox in place of the standard types",
+    "dotnet build exits with zero errors",
+    "git log shows the commit on feature/win11-ui",
+    "git push origin feature/win11-ui succeeds"
+  ],
+  "verification": [
+    "dotnet build source\\BulkCrapUninstaller\\BulkCrapUninstaller.csproj -p:Platform=\"Any CPU\" -c Release",
+    "git -C . log --oneline -3"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

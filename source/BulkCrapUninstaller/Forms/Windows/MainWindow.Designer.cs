@@ -75,7 +75,7 @@ namespace BulkCrapUninstaller.Forms
             propertiesSidebar = new PropertiesSidebar();
             label1 = new Label();
             groupBox1 = new GroupBox();
-            buttonAdvFiltering = new Button();
+            buttonAdvFiltering = new Win11Button();
             filterEditor1 = new UninstallTools.Controls.FilterEditor();
             uninstallListContextMenuStrip = new ContextMenuStrip(components);
             uninstallContextMenuStripItem = new ToolStripMenuItem();
@@ -1770,7 +1770,7 @@ namespace BulkCrapUninstaller.Forms
         private ToolStripSeparator toolStripSeparator23;
         private ToolStripMenuItem viewWindowsStoreAppsToolStripMenuItem;
         internal UninstallTools.Controls.FilterEditor filterEditor1;
-        private Button buttonAdvFiltering;
+        private Win11Button buttonAdvFiltering;
         private ToolStripSeparator toolStripSeparator24;
         private ToolStripButton toolStripButton7;
         private ToolStripButton toolStripButton8;

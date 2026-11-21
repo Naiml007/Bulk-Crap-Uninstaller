@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using BulkCrapUninstaller.Controls;
 using BulkCrapUninstaller.Functions.Tracking;
 
 namespace BulkCrapUninstaller.Forms
@@ -36,11 +37,11 @@ namespace BulkCrapUninstaller.Forms
             components = new Container();
             ComponentResourceManager resources = new ComponentResourceManager(typeof(JunkRemoveWindow));
             exportDialog = new SaveFileDialog();
-            buttonCancel = new Button();
-            buttonAccept = new Button();
-            buttonExport = new Button();
+            buttonCancel = new Win11Button();
+            buttonAccept = new Win11Button();
+            buttonExport = new Win11Button();
             comboBoxChecker = new ComboBox();
-            checkBoxHideLowConfidence = new CheckBox();
+            checkBoxHideLowConfidence = new Win11CheckBox();
             panel1 = new Panel();
             groupBox1 = new GroupBox();
             objectListViewMain = new ObjectListView();
@@ -248,11 +249,11 @@ namespace BulkCrapUninstaller.Forms
         #endregion
 
         private SaveFileDialog exportDialog;
-        private Button buttonCancel;
-        private Button buttonAccept;
-        private Button buttonExport;
+        private Win11Button buttonCancel;
+        private Win11Button buttonAccept;
+        private Win11Button buttonExport;
         private ComboBox comboBoxChecker;
-        private CheckBox checkBoxHideLowConfidence;
+        private Win11CheckBox checkBoxHideLowConfidence;
         private Panel panel1;
         private GroupBox groupBox1;
         private ObjectListView objectListViewMain;
